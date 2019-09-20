@@ -1,18 +1,19 @@
-#ifndef TOKENS_H_
-#define TOKENS_H_
-
 class Word {
 public:
-	Word(int t, char *s);
 	const int tag;
 	const char *lexeme;
+	Word(int t, char *s){
+		tag = t;
+		lexeme = s;
+	}
 };
 
 class Number {
 public:
-	Number(int t, int v);
 	const int tag;
 	const int value;
+	Number(int t, int v){
+		tag = t;
+		value = v;
+	}
 };
-
-#endif /* TOKENS_H_ */
