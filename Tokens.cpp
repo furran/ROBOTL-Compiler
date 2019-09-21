@@ -1,19 +1,47 @@
-class Word {
+#define NUMBER 256
+#define ID 257
+#define KEYWORD 258
+
+class Token {
 public:
 	const int tag;
-	const char *lexeme;
-	Word(int t, char *s){
-		tag = t;
-		lexeme = s;
+
+	Token(int t)
+	: tag(t)
+	{
 	}
+
+	const int getTag(){
+		return tag;
+	}
+
 };
 
-class Number {
+class Number: public Token {
 public:
-	const int tag;
 	const int value;
-	Number(int t, int v){
-		tag = t;
-		value = v;
+	Number(int v)
+	: Token(NUMBER), value(v)
+	{
 	}
+
+	const int getValue(){
+		return value;
+	}
+
+};
+
+
+class Word: public Token {
+public:
+	const std::string lexeme;
+	Word(int t, const std::string s)
+	: Token(t), lexeme(s)
+	{
+	}
+
+	const std::string getLexeme(){
+		return lexeme;
+	}
+
 };
