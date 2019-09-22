@@ -53,7 +53,8 @@ int main(){
 	while(buff_length--){
 		Token t = lexer.scan();
 		int tag = t.getTag();
-		cout << "tag" << tag << "\n";
+			cout << "tag" << tag << "\n";
+
 		if(tag == 0)break;
 	}
 

@@ -16,6 +16,7 @@ public:
 	Lexer(Buffer b)
 	: buffer(b)
 	{
+		std::cout << b.buff << std::endl;
 		for(int i = 0;i<NUMBER_OF_KEYWORDS;i++){
 			Word w(KEYWORD, keywords[i]);
 			reserve(w);
@@ -25,10 +26,8 @@ public:
 	Token scan(){
 		//consome caracteres em branco, linhas de comentario e conta o numero de linhas lidas(EOF);
 		peek = buffer.next();
-		printf("%c",peek);
+		std:: cout << "peek: " <<  peek << std::endl;
 		while(true){
-			peek = buffer.next();
-			printf("%c",peek);
 			if(peek == ' ' || peek==EOF);
 			else if(peek=='\n') line++;
 			else if(peek=='#'){
@@ -37,6 +36,7 @@ public:
 				}
 			}
 			else break;
+			peek = buffer.next();
 		}
 		// tokeniza numero
 		if(isdigit(peek)){
@@ -47,20 +47,24 @@ public:
 				peek = buffer.next();
 				printf("%c",peek);
 			}
+			std::cout << "NUMBER: " << v << std::endl;
 			Number num(v);
 			return num;
 		}
 		//tokeniza id ou keyword
 		if(isalpha(peek)){
-			std::string lex = "";
+			std::string lex("");
 			while(isdigit(peek) || isalpha(peek)){
 				lex+= peek;
 				peek = buffer.next();
-				printf("%c",peek);
 			}
-			std::unordered_map<std::string,Token>::iterator it = table.find(lex);
 
-			if(it!= table.end())return it->second;
+			std::unordered_map<std::string,Token>::iterator it = table.find(lex);
+			std::cout << "ALPHANUMERIC: " << lex << std::endl;
+			if(it!= table.end()){
+				printf("palavra chave: %d ",it->second.tag); std::cout << lex << std::endl;
+				return it->second;
+			}
 
 			Word w(ID,lex);
 			table.insert(std::make_pair(lex,w));

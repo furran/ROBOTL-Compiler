@@ -1,0 +1,11 @@
+char const *keywords[] = { "programainicio", "fimprograma", "execucaoinicio",
+		"fimexecucao", "definainstrucao", "como", "inicio", "fim", "repita",
+		"vezes", "fimrepita", "enquanto", "faca", "fimpara", "se", "entao",
+		"fimse", "senao", "fimsenao", "mova", "passos", "vire para", "pare",
+		"finalize", "apague lampada", "acenda lampada", "aguarde ate",
+		"robo pronto", "robo ocupado", "robo parado", "robo movimentando",
+		"frente robo bloqueada", "direita robo bloqueada",
+		"esquerda robo bloqueada", "lampada acesa a frente",
+		"lampada apagada a frente", "lampada acesa a esquerda",
+		"lampada apagada a esquerda", "lampada acesa a direita",
+		"lampada apagada a direita", "esquerda", "direita" };

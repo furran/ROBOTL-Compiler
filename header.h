@@ -12,14 +12,10 @@
 char const *keywords[] = { "programainicio", "fimprograma", "execucaoinicio",
 		"fimexecucao", "definainstrucao", "como", "inicio", "fim", "repita",
 		"vezes", "fimrepita", "enquanto", "faca", "fimpara", "se", "entao",
-		"fimse", "senao", "fimsenao", "mova", "passos", "vire para", "pare",
-		"finalize", "apague lampada", "acenda lampada", "aguarde ate",
-		"robo pronto", "robo ocupado", "robo parado", "robo movimentando",
-		"frente robo bloqueada", "direita robo bloqueada",
-		"esquerda robo_bloqueada", "lampada acesa a frente",
-		"lampada apagada a frente", "lampada acesa a esquerda",
-		"lampada apagada a esquerda", "lampada acesa a direita",
-		"lampada apagada a direita", "esquerda", "direita" };
+		"fimse", "senao", "fimsenao", "mova", "passos", "vire", "para", "pare",
+		"finalize", "apague", "lampada", "acenda", "aguarde","ate",
+		"robo","pronto", "ocupado", "parado", "movimentando",
+		"bloqueada", "acesa","a" ,"frente","apagada", "esquerda", "direita" };
 
 #define NUMBER_OF_KEYWORDS 42
 

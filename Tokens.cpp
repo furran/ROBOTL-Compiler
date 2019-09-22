@@ -20,8 +20,7 @@ public:
 class Number: public Token {
 public:
 	const int value;
-	Number(int v)
-	: Token(NUMBER), value(v)
+	Number(int v)	: Token(NUMBER), value(v)
 	{
 	}
 
