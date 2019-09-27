@@ -12,6 +12,7 @@ char const *keywords[] = { "programainicio", "fimprograma", "execucaoinicio",
 		
 TODO: 
  - funcao de pegar substring em class buffer
+ 	+ apropriadamente implementar o lookahead e o beginLexeme
  - class buffer ter dois bufferes de string (?)
  - fazer mensagens de erro corretamente
  - saber o q fazer com a tabela 
