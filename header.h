@@ -1,11 +1,14 @@
 #include <iostream>
 #include <algorithm>
-#include "Tokens.cpp"
 #include <stdio.h>
 #include <string>
 #include <fstream>
 #include "buffer.h"
 #include <unordered_map>
+#include "token.cpp"
+
+
+#define END_FILE 0
 
 
 
@@ -19,6 +22,12 @@ char const *keywords[] = { "programainicio", "fimprograma", "execucaoinicio",
 
 #define NUMBER_OF_KEYWORDS 42
 
-int digit(char c){
-	return c-'0';
+std::unordered_map<std::string, Token> table;
+
+bool isWS(char peek){ //ve se o caractere eh o que consideramos como "espaco em branco"
+	if(peek == ' ' || peek == '\n' || peek == '\t'  || peek == '\r' || peek == '#'){
+		return true;
+	}
+	else return false;
 }
+

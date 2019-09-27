@@ -27,37 +27,41 @@ int main(){
 	}
 
 	buffer.buff[p] = 0;
-
+	cout << "lookahead " << buffer.lookAhead() << endl;
 	cout << "BUFFER: " << buffer.buff << endl;
 
 	Lexer lexer(buffer);
 
-	std::vector<std::string> keys;
-	keys.reserve(lexer.table.size());
-	std::vector<Token> vals;
-	vals.reserve(lexer.table.size());
+	std::vector<std::string> lexemes;
+	lexemes.reserve(table.size());
+	std::vector<Token> tokens;
+	tokens.reserve(table.size());
 
-	for(auto kv : lexer.table) {
-	    keys.push_back(kv.first);
-	    vals.push_back(kv.second);
+	for(auto kv : table) {
+	    lexemes.push_back(kv.first);
+	    tokens.push_back(kv.second);
 	}
 
-	for(auto k : keys){
+	for(auto k : lexemes){
 		cout << k<< " | ";
 	}
 	cout << endl;
-	for(auto v : vals){
+	for(auto v : tokens){
 			cout << v.tag << " | ";
 		}
 	cout << endl;
+
+	cout << "++++++++++++++" << endl;
 	while(buff_length--){
 		Token t = lexer.scan();
 		int tag = t.getTag();
-			cout << "tag" << tag << "\n";
+
+		cout << "tag:" << tag << "\n";
 
 		if(tag == 0)break;
 	}
-
+	cout << "++++++++++++++" << endl;
+	cout << "LINES READ: " << lexer.line << endl;
 	cout << "sucesso xd?" << endl;
 
 

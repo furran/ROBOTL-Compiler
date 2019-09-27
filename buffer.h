@@ -4,15 +4,20 @@ public:
 	static const unsigned int length = 4096;
 	std::string buff;
 	char *beginPtr;
-	char *forward;
+	int forward;
 	int curIndex;
 	Buffer()
-	: buff(),  curIndex(0)
+	: buff(),  curIndex(0), forward(1)
 	{
+		buff.resize(length);
 	}
 	char next(){
-		char c = buff[curIndex++];
-		return c;
+		forward++;
+		return buff[curIndex++];
+	}
+
+	char lookAhead(){
+		return buff[forward];
 	}
 
 };
