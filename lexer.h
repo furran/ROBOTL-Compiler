@@ -12,39 +12,18 @@ public:
 	}
 
 	//precarrega na tabela as palavras reservadas
-	Lexer(Buffer b)
-	: buffer(b)
+	Lexer(std::string filename)
+	: buffer(filename)
 	{
 		peek = ' ';
-		std::cout << b.buff1 << std::endl;
+		std::cout << "BUFFER IN LEX:\n" << buffer.buff1 << std::endl;
 		for(int i = 0, keyword= NUMBER;i<NUMBER_OF_KEYWORDS;i++){
 			Token w(keyword++, keywords[i]);
 			install(w);
 		}
 	}
 
-#define temp 10
 
-	void consumeDelimiters(){
-		while(true){
-			if(peek == ' ' || peek == '\r');
-			else if(peek=='\n') line++;
-			else if(peek=='#'){
-				while(true){
-					peek = buffer.next();
-					if(peek == '\n'){
-						line++;
-						break;
-					}
-					else if(peek == END_FILE){
-						break;
-					}
-				}
-			}
-			else break;
-			peek = buffer.next();
-		}
-	}
 
 	Token scan(){
 
@@ -53,7 +32,29 @@ public:
 		std:: cout << "second_peek: " <<  peek << std::endl; // remove this
 		//consome caracteres em branco, linhas de comentario
 		//,LF,CR até o próximo caractere válido.
-		consumeDelimiters();
+		while (true) {
+			if (peek == ' ' || peek == '\r')
+				;
+			else if (peek == '\n')
+				line++;
+			else if (peek == '#') {
+				while (true) {
+					peek = buffer.next();
+					if (peek == '\n') {
+						line++;
+						break;
+					} else if (peek == END_FILE) {
+						break;
+					}
+				}
+			} else if (peek == END_FILE) {
+				Token t(END_FILE, "END_FILE");
+				return t;
+
+			} else
+				break;
+			peek = buffer.next();
+		}
 
 		buffer.beginLexeme();
 
@@ -69,8 +70,8 @@ public:
 				look = buffer.lookAhead();
 				lex+= peek;
 
-				if(lex.size() > 100){
-					std::cout << "AVISO::LINHA:" << line << ": Limite de caracteres(50) excedido para o identificador >>"<< lex <<"<<" << std::endl;
+				if(lex.size() > 150){
+					std::cout << "AVISO::LINHA:" << line << ": Limite de caracteres(150) excedido para o identificador >>"<< lex <<"<<" << std::endl;
 					break;
 				}
 
@@ -106,14 +107,14 @@ public:
 			while(isdigit(buffer.lookAhead())){
 				peek = buffer.next();
 				lex+= peek;
-				if(lex.size() > 10){
-					std::cout << "ERRO::LINHA:" << line << ": O numero execede o limite de digitos(10) >>" << lex << "<<.\n";
+				if(lex.size() > 9){
+					std::cout << "ERRO::LINHA:" << line << ": O numero execede o limite de digitos(9) >>" << lex << "<<.\n";
 					break;
 				}
 			}
 
-			if(!isDelimiter(buffer.lookAhead()) && buffer.lookAhead() != END_FILE){
-				while(!isDelimiter(buffer.lookAhead()) && buffer.lookAhead() != END_FILE){
+			if(!isDelimiter(buffer.lookAhead())){
+				while(!isDelimiter(buffer.lookAhead())){
 					lex+=buffer.next();
 				}
 
@@ -126,11 +127,7 @@ public:
 			return num;
 		}
 
-		if(peek == END_FILE){
-			Token t(0,"END_FILE");
-			return t;
-		}
-		else printf("ERRO::LINHA:%d: Impossivel associar simbolo a qualquer padrao conhecido.\n", line);
+		printf("ERRO::LINHA:%d: Impossivel associar simbolo a qualquer padrao conhecido. >> %c\n", line, peek);
 
 		Token t(ERROR, "ERROR");
 		return t;

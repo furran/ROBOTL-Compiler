@@ -4,34 +4,7 @@
 using namespace std;
 
 int main(){
-	string filename;
-	Buffer buffer;
-	cout << "lol" << endl;
-	filename = "teste.txt";
-	string s = "OMEGA";
-	string* ptr = &s;
-	cout << ptr->operator [](2) << endl;
-	int buff_length = buffer.length;
-	std::ifstream in(filename, std::ios::in | std::ios::binary);
-
-	int p;
-	if (in)
-	{
-		in.seekg(0, std::ios::end);
-		int size = in.tellg();
-		in.seekg(0, std::ios::beg);
-
-		p =min(buff_length, size);
-
-		in.read(&buffer.buff1[0], buff_length);
-		in.close();
-	}
-
-	buffer.buff1[p] = END_FILE;
-
-	cout << "BUFFER: " << *buffer.curBuff << endl;
-
-	Lexer lexer(buffer);
+	Lexer lexer("teste.txt");
 
 	std::vector<std::string> lexemes;
 	lexemes.reserve(table.size());
@@ -52,16 +25,16 @@ int main(){
 		}
 	cout << endl;
 
-	cout << "LOLE: " << buffer.curBuff->operator [](1) << endl;
+	cout << "LOLE: " << lexer.buffer.curBuff->operator [](1) << endl;
 
 	cout << "++++++++++++++" << endl;
-	while(buff_length--){
+	while(true){
 		Token t = lexer.scan();
 		int tag = t.getTag();
 
 		cout << "tag:" << tag << "\n";
 
-		if(tag == 0)break;
+		if(tag == END_FILE)break;
 	}
 	cout << "++++++++++++++" << endl;
 	cout << "LINES READ: " << lexer.line << endl;

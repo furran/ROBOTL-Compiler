@@ -1,3 +1,5 @@
+#define END_FILE -1
+
 #include <iostream>
 #include <algorithm>
 #include <stdio.h>
@@ -7,7 +9,7 @@
 #include "token.cpp"
 #include "buffer.h"
 
-#define END_FILE 0
+
 
 
 char const *keywords[] = { "programainicio", "fimprograma", "execucaoinicio",
