@@ -16,7 +16,7 @@ public:
 	: buffer(b)
 	{
 		peek = ' ';
-		std::cout << b.buff << std::endl;
+		std::cout << b.buff1 << std::endl;
 		for(int i = 0;i<NUMBER_OF_KEYWORDS;i++){
 			Token w(KEYWORD, keywords[i]);
 			reserve(w);
@@ -24,16 +24,23 @@ public:
 	}
 
 	Token scan(){
-		//consome caracteres em branco, linhas de comentario e conta o numero de linhas lidas(EOF);
-
+		std:: cout << "first_peek: " <<  peek << std::endl; // remove this
 		peek = buffer.next();
-		std:: cout << "peek: " <<  peek << std::endl; // remove this
+		std:: cout << "second_peek: " <<  peek << std::endl; // remove this
+		//consome caracteres em branco, linhas de comentario e conta o numero de linhas lidas(EOF);
 		while(true){
-			if(peek == ' ');
+			if(peek == ' ' || peek == '\r');
 			else if(peek=='\n') line++;
 			else if(peek=='#'){
-				while(peek!='\n'){
+				while(true){
 					peek = buffer.next();
+					if(peek == '\n'){
+						line++;
+						break;
+					}
+					else if(peek == END_FILE){
+						break;
+					}
 				}
 			}
 			else break;
@@ -43,10 +50,12 @@ public:
 		//tokeniza id ou keyword
 		if(isalpha(peek)){
 			std::string lex("");
-			while(isdigit(peek) || isalpha(peek)){
-				lex+= peek;
+			lex+= peek;
+			while(isdigit(buffer.lookAhead()) || isalpha(buffer.lookAhead())){
 				peek = buffer.next();
+				lex+= peek;
 			}
+
 
 			std::unordered_map<std::string,Token>::iterator it = table.find(lex);
 			std::cout << "ALPHANUMERIC: " << lex << std::endl;//remove this
@@ -57,31 +66,32 @@ public:
 
 			Token w(ID,lex);
 			table.insert(std::make_pair(lex,w));
-					return w;
+			return w;
 		}
 		// tokeniza numero
 		if(isdigit(peek)){
 			std::string lex("");
-			lex+=peek;
+			lex += peek;
 			while(isdigit(buffer.lookAhead())){
 				peek = buffer.next();
-				lex+=peek;
-				printf("%c",peek); //remove this
-			}
-			std::cout << "\nNUMBER: " << lex << std::endl;
-			if(!isWS(buffer.lookAhead())){
-				do{
-					lex += peek;
-					peek = buffer.next();
-				}while(!isWS(peek));
-				std::cout << "ERRO::LINHA:"<<line<<": Numero mal formado. >> "<<lex<<" <<" << std::endl;
+				lex+= peek;
 			}
 
+			if(!isWS(buffer.lookAhead()) && buffer.lookAhead() != END_FILE){
+				while(!isWS(buffer.lookAhead()) && buffer.lookAhead() != END_FILE){
+					lex+=buffer.next();
+				}
+
+				std::cout << "ERRO::LINHA:" << line << ": Numero mal formado. >> " << lex << " <<\n";
+			}
+
+			std::cout << "LINHA:" << line << ":NUMBER: " << lex << " LOOKAHEAD: " << buffer.lookAhead() << std::endl;
+			std::cout << "PEEK: " << peek << std::endl;
 			Token num(NUMBER,lex);
 			return num;
 		}
 
-		if(peek == 0){
+		if(peek == END_FILE){
 			Token t(0,"ENDFILE");
 			return t;
 		}

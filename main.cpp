@@ -8,7 +8,9 @@ int main(){
 	Buffer buffer;
 	cout << "lol" << endl;
 	filename = "teste.txt";
-
+	string s = "OMEGA";
+	string* ptr = &s;
+	cout << ptr->operator [](2) << endl;
 	int buff_length = buffer.length;
 	std::ifstream in(filename, std::ios::in | std::ios::binary);
 
@@ -18,17 +20,16 @@ int main(){
 		in.seekg(0, std::ios::end);
 		int size = in.tellg();
 		in.seekg(0, std::ios::beg);
-		buffer.buff.resize(buffer.length);
 
 		p =min(buff_length, size);
 
-		in.read(&buffer.buff[0], min(buff_length, size));
+		in.read(&buffer.buff1[0], min(buff_length, size));
 		in.close();
 	}
 
-	buffer.buff[p] = 0;
-	cout << "lookahead " << buffer.lookAhead() << endl;
-	cout << "BUFFER: " << buffer.buff << endl;
+	buffer.buff1[p] = END_FILE;
+
+	cout << "BUFFER: " << *buffer.curBuff << endl;
 
 	Lexer lexer(buffer);
 
@@ -50,6 +51,8 @@ int main(){
 			cout << v.tag << " | ";
 		}
 	cout << endl;
+
+	cout << "LOLE: " << buffer.curBuff->operator [](1) << endl;
 
 	cout << "++++++++++++++" << endl;
 	while(buff_length--){

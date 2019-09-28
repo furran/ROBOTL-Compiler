@@ -1,3 +1,5 @@
+//keywords com espaco
+
 char const *keywords[] = { "programainicio", "fimprograma", "execucaoinicio",
 		"fimexecucao", "definainstrucao", "como", "inicio", "fim", "repita",
 		"vezes", "fimrepita", "enquanto", "faca", "fimpara", "se", "entao",
