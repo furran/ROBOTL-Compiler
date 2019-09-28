@@ -12,6 +12,213 @@ char const *keywords[] = { "programainicio", "fimprograma", "execucaoinicio",
 		"lampada apagada a esquerda", "lampada acesa a direita",
 		"lampada apagada a direita", "esquerda", "direita" };
 		
+		enum {PROGRAMAINICIO, FIMPROGRAMA, EXECUCAOINICIO,
+		FIMEXECUCAO, DEFINAINSTRUCAO, COMO, INICIO, FIM, REPITA,
+		VEZES, FIMREPITA, ENQUANTO, FACA, FIMPARA, SE, ENTAO,
+		FIMSE, SENAO, FIMSENAO, MOVA, PASSOS, VIRE_PARA, PARE,
+		FINALIZE, APAGUE_LAMPADA, ACENDA_LAMPADA, AGUARDE_ATE,
+		ROBO_PRONTO, ROBO_OCUPADO, ROBO_PARADO, ROBO_MOVIMENTANDO,
+		FRENTE_ROBO_BLOQUEADA, DIREITA_ROBO_BLOQUEADA,
+		ESQUERDA_ROBO_BLOQUEADA, LAMPADA_ACESA_A_FRENTE,
+		LAMPADA_APAGADA_A_FRENTE, LAMPADA_ACESA_A_ESQUERDA,
+		LAMPADA_APAGADA_A_ESQUERDA, LAMPADA_ACESA_A_DIREITA,
+		LAMPADA_APAGADA_A_DIREITA, ESQUERDA, DIREITA};
+//ok
+
+
+	Token getCondicao() {
+		int state = 0;
+		std::string str;
+		while (true) {
+			switch (state) {
+			case 0: {
+				str = getWord();
+				if (str == "robo")
+					state = 1;
+				else if (str == "frente")
+					state = 6;
+				else if (str == "esquerda")
+					state = 9;
+				else if (str == "direita")
+					state = 12;
+				else if (str == "lampada")
+					state = 9;
+				else {
+					state = -1;
+				}
+				break;
+			}
+			case 1: {
+				str = getWord();
+				if (str == "pronto")
+					state = 2;
+				else if (str == "ocupado")
+					state = 3;
+				else if (str == "parado")
+					state = 4;
+				else if (str == "movimentando")
+					state = 5;
+				break;
+			}
+			case 2: {
+				buffer.beginLexeme();
+				return Token(CONDICAO, "robo pronto");
+			}
+			case 3: {
+				buffer.beginLexeme();
+				return Token(CONDICAO, "robo ocupado");
+			}
+			case 4: {
+				buffer.beginLexeme();
+				return Token(CONDICAO, "robo parado");
+			}
+			case 5: {
+				buffer.beginLexeme();
+				return Token(CONDICAO, "robo movimentando");
+			}
+			case 6: {
+				str = getWord();
+				if (str == "robo") {
+					state = 7;
+				}
+				else state = -1;
+				break;
+			}
+			case 7: {
+				str = getWord();
+				if(str == "bloquada"){
+					state = 8;
+				}
+				else state = -1;
+				break;
+			}
+			case 8:{
+				buffer.beginLexeme();
+				return Token(CONDICAO, "frente robo bloqueada");
+			}
+			case 9:{
+				str = getWord();
+				if (str == "robo") {
+					state = 10;
+				} else
+					state = -1;
+				break;
+			}
+			case 10:{
+				str = getWord();
+				if (str == "bloqueada") {
+					state = 11;
+				} else
+					state = -1;
+				break;
+			}
+			case 11:{
+				buffer.beginLexeme();
+				return Token(CONDICAO, "esquerda robo bloqueada");
+			}
+			case 12: {
+				str = getWord();
+				if (str == "robo") {
+					state = 13;
+				} else
+					state = -1;
+				break;
+			}
+			case 13: {
+				str = getWord();
+				if (str == "bloqueada") {
+					state = 14;
+				} else
+					state = -1;
+				break;
+			}
+			case 14: {
+				buffer.beginLexeme();
+				return Token(CONDICAO, "direita robo bloqueada");
+			}
+			case 15: {
+				str = getWord();
+				if (str == "acesa")
+					state = 16;
+				else if (str == "apagada")
+					state = 21;
+				else
+					state = -1;
+				break;
+			}
+			case 16:{
+				str = getWord();
+				if (str == "a") {
+					state = 17;
+				} else
+					state = -1;
+				break;
+			}
+			case 17:{
+				str = getWord();
+				if (str == "frente")
+					state = 18;
+				else if (str == "esquerda")
+					state = 19;
+				else if (str == "direita")
+					state = 20;
+				else
+					state = -1;
+				break;
+			}
+			case 18:{
+				buffer.beginLexeme();
+				return Token(CONDICAO, "lampada acesa a frente" );
+			}
+			case 19:{
+				buffer.beginLexeme();
+				return Token(CONDICAO, "lampada acesa a esquerda");
+			}
+			case 20:{
+				buffer.beginLexeme();
+				return Token(CONDICAO, "lampada acesa a direita");
+			}
+			case 21: {
+				str = getWord();
+				if (str == "a") {
+					state = 22;
+				} else
+					state = -1;
+				break;
+			}
+			case 22: {
+				str = getWord();
+				if (str == "frente")
+					state = 23;
+				else if (str == "esquerda")
+					state = 24;
+				else if (str == "direita")
+					state = 25;
+				else
+					state = -1;
+				break;
+			}
+			case 23: {
+				buffer.beginLexeme();
+				return Token(CONDICAO, "lampada apagada a frente");
+			}
+			case 24: {
+				buffer.beginLexeme();
+				return Token(CONDICAO, "lampada apagada a esquerda");
+			}
+			case 25: {
+				buffer.beginLexeme();
+				return Token(CONDICAO, "lampada apagada a direita");
+			}
+			case -1: {
+				buffer.fail();
+				return Token(FAIL , "FAIL");
+			}
+			}
+		}
+	}
+
+		
 TODO: 
  - funcao de pegar substring em class buffer
  	+ apropriadamente implementar o lookahead e o beginLexeme

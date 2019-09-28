@@ -23,7 +23,7 @@ int main(){
 
 		p =min(buff_length, size);
 
-		in.read(&buffer.buff1[0], min(buff_length, size));
+		in.read(&buffer.buff1[0], buff_length);
 		in.close();
 	}
 

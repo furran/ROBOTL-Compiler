@@ -9,15 +9,17 @@ public:
 	std::string buff1;
 	std::string buff2;
 	int beginLex;
-	int curIndex;
+	int forward;
 	Buffer()
-	: buff1(),buff2(), curIndex(0)
+	: buff1(),buff2(), forward(0), beginLex(0)
 	{
 		curBuff = &buff1;
 		buff1.resize(length);
 		buff2.resize(length);
 	}
 	char next();
+	void retract();
+	void fail();
 	char lookAhead();
 	void beginLexeme();
 	std::string getLexeme();
@@ -37,30 +39,38 @@ std::string* Buffer::getOtherBuffer(){
 }
 //esse codigo ta mangueado mas fzer o q
 char Buffer::next(){
-	int x = curIndex;
+	int x = forward;
 	std::string * buff = curBuff;
-	curIndex++;
-	if(curIndex==length){
-		curIndex = 0;
+	forward++;
+	if(forward==length){
+		forward = 0;
 		curBuff = this->getOtherBuffer();
 	}
 	return buff->operator [](x);
 }
 
+void Buffer::retract(){
+	forward--;
+}
+
+void Buffer::fail(){
+	forward=beginLex;
+}
+
 char Buffer::lookAhead(){
-	return curBuff->operator [](curIndex);
+	return curBuff->operator [](forward);
 }
 
 void Buffer::beginLexeme(){
-	beginLex = curIndex;
+	beginLex = forward;
 }
 
 std::string Buffer::getLexeme(){
-	if(curIndex<=beginLex){
+	if(forward<=beginLex){
 		return (this->getOtherBuffer())->substr(beginLex,length-beginLex)+
-				curBuff->substr(0, curIndex);
+				curBuff->substr(0, forward);
 	}
-	else return curBuff->substr(beginLex, curIndex-beginLex);
+	else return curBuff->substr(beginLex, forward-beginLex);
 }
 
 

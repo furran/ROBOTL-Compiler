@@ -1,17 +1,23 @@
-#define NUMBER 256
-#define ID 257
-#define KEYWORD 258
+
+
+enum {  NUMBER=256, ID, PROGRAMAINICIO, FIMPROGRAMA, EXECUCAOINICIO,
+		FIMEXECUCAO, DEFINAINSTRUCAO, COMO, INICIO, FIM, REPITA,
+		VEZES, FIMREPITA, ENQUANTO, FACA, FIMPARA, SE, ENTAO,
+		FIMSE, SENAO, FIMSENAO, MOVA, PASSOS, VIRE, PARA, PARE,
+		FINALIZE, APAGUE, LAMPADA, ACENDA, AGUARDE,ATE,
+		ROBO ,PRONTO, OCUPADO, PARADO, MOVIMENTANDO,
+		BLOQUEADA, ACESA,A ,FRENTE,APAGADA, ESQUERDA, DIREITA, ERROR };
 
 class Token {
 public:
-	const int tag;
+	int tag;
 	const std::string lexeme;
 	Token(int t, std::string lex)
 	: tag(t), lexeme(lex)
 	{
 	}
 
-	const int getTag(){
+	int getTag(){
 		return tag;
 	}
 
