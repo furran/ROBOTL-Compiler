@@ -12,13 +12,12 @@ public:
 	int beginLex;
 	int forward;
 	Buffer(std::string filename)
-	: buff1(),buff2(), forward(0), beginLex(0)
+	: buff1(),buff2(), beginLex(0), forward(0)
 	{
 		buff1.resize(length);
 		buff2.resize(length);
 		file.open(filename, std::ios::in | std::ios::binary);
 		int length = this->length;
-		int size;
 		if (file) {
 			file.read(&buff1[0], length);
 			if(file.eof()){
@@ -54,7 +53,6 @@ std::string* Buffer::getOtherBuffer(){
 }
 
 void Buffer::load(){
-	int p;
 	int length = this->length;
 	if (file) {
 		file.read(&curBuff->operator [](0), length);
