@@ -1,0 +1,16 @@
+#comentario
+PRoGRamaIniciO
+	definainstrucao ate lampada
+
+pronto
+
+como
+mova
+		PASSOS
+#comentario2#@@@$%
+vire
+_ID_62
+100000
+vezes
+como
+inicio
