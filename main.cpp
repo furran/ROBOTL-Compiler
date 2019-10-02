@@ -4,41 +4,43 @@
 using namespace std;
 
 int main(){
-	Lexer lexer("teste.txt");
+	string filename;
 
-	std::vector<std::string> lexemes;
-	lexemes.reserve(table.size());
+	cout << "Digite o nome do arquivo: " << endl;
+	cin >> filename;
+
+	Lexer lexer(filename);
+
+	std::vector<std::string> padroes;
+	padroes.reserve(table.size());
 	std::vector<Token> tokens;
 	tokens.reserve(table.size());
 
 	for(auto kv : table) {
-	    lexemes.push_back(kv.first);
+	    padroes.push_back(kv.first);
 	    tokens.push_back(kv.second);
 	}
-
-	for(auto k : lexemes){
+	cout << "# Padroes: ";
+	for(auto k : padroes){
 		cout << k<< " | ";
 	}
-	cout << endl;
-	for(auto v : tokens){
-			cout << v.tag << " | ";
+	cout << endl << "# Tags: ";
+	for(auto v : tag){
+			cout << v << " | ";
 		}
 	cout << endl;
-
-	cout << "LOLE: " << lexer.buffer.curBuff->operator [](1) << endl;
 
 	cout << "++++++++++++++" << endl;
 	while(true){
 		Token t = lexer.scan();
-		int tag = t.getTag();
+		int tipo = t.getTag();
+		cout << "Token: < " << tag[tipo] << " , " << t.lexeme << " >\n";
 
-		cout << "tag:" << tag << "\n";
-
-		if(tag == END_FILE)break;
+		if(tipo == END_OF_FILE)break;
 	}
 	cout << "++++++++++++++" << endl;
 	cout << "LINES READ: " << lexer.line << endl;
-	cout << "sucesso xd?" << endl;
+	cout << "sucesso" << endl;
 
 
 }

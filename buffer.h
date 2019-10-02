@@ -26,7 +26,10 @@ public:
 				buff1[p] = END_FILE;
 			}
 		}
-		else std::cout << "ERRO:: Falha ao abrir o arquivo: >> " << filename << " << " << std::endl;
+		else {
+			std::cout << "ERRO:: Falha ao abrir o arquivo: >> " << filename << " << " << std::endl;
+			buff1[0] = END_FILE;
+		}
 		curBuff = &buff1;
 	}
 	char next();
