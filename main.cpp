@@ -1,5 +1,8 @@
-#include "lexer.h"
 #include <vector>
+#include <unordered_map>
+#include "lexer.cpp"
+#include "table.cpp"
+#include "buffer.cpp"
 
 using namespace std;
 

@@ -1,3 +1,8 @@
+#ifndef BUFFER_H_
+#define BUFFER_H_
+
+#include <iostream>
+#include <fstream>
 
 class Buffer{
 private:
@@ -11,26 +16,8 @@ public:
 	std::string buff2;
 	int beginLex;
 	int forward;
-	Buffer(std::string filename)
-	: buff1(),buff2(), beginLex(0), forward(0)
-	{
-		buff1.resize(length);
-		buff2.resize(length);
-		file.open(filename, std::ios::in | std::ios::binary);
-		int length = this->length;
-		if (file) {
-			file.read(&buff1[0], length);
-			if(file.eof()){
-				int p = file.gcount();
-				buff1[p] = END_FILE;
-			}
-		}
-		else {
-			std::cout << "ERRO:: Falha ao abrir o arquivo: >> " << filename << " << " << std::endl;
-			buff1[0] = END_FILE;
-		}
-		curBuff = &buff1;
-	}
+	Buffer(std::string filename);
+
 	char next();
 	void retract();
 	void fail();
@@ -39,68 +26,5 @@ public:
 	std::string getLexeme();
 };
 
-std::string* Buffer::getOtherBuffer(){
-
-	if(curBuff == &buff1){
-		return &buff2;
-	}
-	else if(curBuff == &buff2){
-		return &buff1;
-	}
-	printf("error:: Buffer::getOtherBuffer() failed. (in file  >> token.cpp <<)\n");
-	return NULL;
-
-}
-
-void Buffer::load(){
-	int length = this->length;
-	if (file) {
-		file.read(&curBuff->operator [](0), length);
-		if(file.eof()){
-			int howManyLeft = file.gcount();
-			std::cout << "HOOOOOOOOOOW MANY LEEEEEEEEEEFT: " << howManyLeft << std::endl;//remove this
-			curBuff->operator [](howManyLeft) = END_FILE;
-		}
-	}
-}
-
-//esse codigo ta mangueado mas fzer o q
-char Buffer::next(){
-	int x = forward;
-	std::string * buff = curBuff;
-	forward++;
-	if(forward==length){
-		forward = 0;
-		curBuff = this->getOtherBuffer();
-		this->load();
-	}
-	return buff->operator [](x);
-}
-
-void Buffer::retract(){
-	forward--;
-}
-
-void Buffer::fail(){
-	forward=beginLex;
-}
-
-char Buffer::lookAhead(){
-	return curBuff->operator [](forward);
-}
-
-void Buffer::beginLexeme(){
-	beginLex = forward;
-}
-
-std::string Buffer::getLexeme(){
-	if(forward<=beginLex){
-		return (this->getOtherBuffer())->substr(beginLex,length-beginLex)+
-				curBuff->substr(0, forward);
-	}
-	else return curBuff->substr(beginLex, forward-beginLex);
-}
-
-
-
+#endif
 

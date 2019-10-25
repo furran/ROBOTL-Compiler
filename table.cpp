@@ -1,15 +1,11 @@
+#ifndef TABLE_CPP_
+#define TABLE_CPP_
+
 #define END_FILE -1
 
-#include <iostream>
-#include <algorithm>
-#include <stdio.h>
 #include <string>
-#include <fstream>
 #include <unordered_map>
 #include "token.cpp"
-#include "buffer.h"
-
-
 
 
 std::string keywords[] = { "programainicio", "fimprograma", "execucaoinicio",
@@ -29,7 +25,8 @@ enum {  PROGRAMAINICIO, FIMPROGRAMA, EXECUCAOINICIO,
 		FINALIZE, APAGUE, LAMPADA, ACENDA, AGUARDE,ATE,
 		ROBO ,PRONTO, OCUPADO, PARADO, MOVIMENTANDO,
 		BLOQUEADA, ACESA,A ,FRENTE,APAGADA, ESQUERDA, DIREITA,
-		ERROR, NUMBER, ID, END_OF_FILE};
+		ERROR, NUMBER, ID, END_OF_FILE
+};
 
 
 std::string tag[]{
@@ -55,3 +52,4 @@ bool isDelimiter(char peek){ //ve se o caractere eh o que consideramos como "esp
 	else return false;
 }
 
+#endif
