@@ -3,6 +3,8 @@
 #include "lexer.cpp"
 #include "table.cpp"
 #include "buffer.cpp"
+#include "parser.cpp"
+
 
 using namespace std;
 
@@ -11,38 +13,23 @@ int main(){
 
 	cout << "Digite o nome do arquivo: " << endl;
 	cin >> filename;
+	Parser parser(filename);
 
-	Lexer lexer(filename);
+	unordered_map<int,int> m;
 
-	std::vector<std::string> padroes;
-	padroes.reserve(table.size());
-	std::vector<Token> tokens;
-	tokens.reserve(table.size());
+	m[1] = 2;
 
-	for(auto kv : table) {
-	    padroes.push_back(kv.first);
-	    tokens.push_back(kv.second);
-	}
-	cout << "# Padroes: ";
-	for(auto k : padroes){
-		cout << k<< " | ";
-	}
-	cout << endl << "# Tags: ";
-	for(auto v : tag){
-			cout << v << " | ";
-		}
-	cout << endl;
+	m[1] = 10;
+
+	cout << m[1] << endl;
 
 	cout << "++++++++++++++" << endl;
-	while(true){
-		Token t = lexer.scan();
-		int tipo = t.getTag();
-		cout << "Token: < " << tag[tipo] << " , " << t.lexeme << " >\n";
 
-		if(tipo == END_OF_FILE)break;
-	}
+	parser.parse();
+
+
 	cout << "++++++++++++++" << endl;
-	cout << "LINES READ: " << lexer.line << endl;
+	cout << "LINES READ: " << parser.line << endl;
 	cout << "sucesso" << endl;
 
 

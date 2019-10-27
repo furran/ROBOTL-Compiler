@@ -3,6 +3,7 @@
 	<name>mata61</name>
 	<comment></comment>
 	<projects>
+		<project>mata61</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

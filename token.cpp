@@ -1,10 +1,18 @@
 #ifndef TOKEN_H_
 #define TOKEN_H_
 
+#include <string>
+
 class Token {
 public:
 	int tag;
-	const std::string lexeme;
+	std::string lexeme;
+
+	Token()
+	: tag(-1)
+	{
+	}
+
 	Token(int t, std::string lex)
 	: tag(t), lexeme(lex)
 	{

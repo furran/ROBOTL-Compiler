@@ -6,11 +6,11 @@ DEFINAINSTRUCAO Trilha COMO #cOmentario #1 @@_#
    Vire Para ESQUERDA
    Apague Lampada
    Vire Para DIREITA
-   Mova 1 Passo
+   Mova 1 Passos
    Aguarde Ate Robo Pronto
  FIM
  EXECUCAOINICIO
-   Repita 3 VEZES Trilha
+   Repita 3 VEZES Trilha FIMREPITA
    Vire Para DIREITA
 	#PROGRAMAINICIO
  FIMEXECUCAO

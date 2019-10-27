@@ -16,7 +16,7 @@ Lexer::Lexer(std::string filename) :
 }
 
 void Lexer::install(Token w) {
-	table.insert(std::make_pair((std::string) w.lexeme, w)); // @suppress("Invalid arguments")
+	symbolTable.insert(std::make_pair((std::string) w.lexeme, w)); // @suppress("Invalid arguments")
 }
 
 void Lexer::deleteUntilDelimiter() {
@@ -31,8 +31,7 @@ Token Lexer::scan() {
 	//consome caracteres em branco, linhas de comentario
 	//,LF,CR at� o pr�ximo caractere v�lido.
 	while (true) {
-		if (peek == ' ' || peek == '\t' || peek == '\r')
-			;
+		if (peek == ' ' || peek == '\t' || peek == '\r');
 		else if (peek == '\n')
 			line++;
 		else if (peek == '#') {
@@ -67,7 +66,7 @@ Token Lexer::scan() {
 						<< lex << "<<" << std::endl;
 				deleteUntilDelimiter();
 				Token w(ID, lex);
-				table.insert(std::make_pair(lex, w)); // @suppress("Invalid arguments")
+				symbolTable.insert(std::make_pair(lex, w)); // @suppress("Invalid arguments")
 				return w;
 			}
 
@@ -86,15 +85,15 @@ Token Lexer::scan() {
 		}
 
 
-		std::unordered_map<std::string, Token>::iterator it = table.find(
+		std::unordered_map<std::string, Token>::iterator it = symbolTable.find(
 				lex);
 
-		if (it != table.end()) {
+		if (it != symbolTable.end()) {
 			return it->second;
 		}
 
 		Token w(ID, lex);
-		table.insert(std::make_pair(lex, w)); // @suppress("Invalid arguments")
+		symbolTable.insert(std::make_pair(lex, w));
 		return w;
 	}
 	// tokeniza numero
