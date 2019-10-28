@@ -5,7 +5,6 @@
 #include "buffer.cpp"
 #include "parser.cpp"
 
-
 using namespace std;
 
 int main(){
@@ -25,12 +24,12 @@ int main(){
 
 	cout << "++++++++++++++" << endl;
 
-	parser.parse();
+	node * tree = parser.parse();
 
 
 	cout << "++++++++++++++" << endl;
 	cout << "LINES READ: " << parser.line << endl;
 	cout << "sucesso" << endl;
 
-
+	printTree(tree);
 }

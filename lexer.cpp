@@ -126,7 +126,7 @@ Token Lexer::scan() {
 			return Token(ERROR, "NUMBER_MALFORMED");
 		}
 
-		Token num(NUMBER, lex);
+		Token num(NUMERO, lex);
 		return num;
 	}
 	if (peek == END_FILE) {

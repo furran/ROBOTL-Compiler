@@ -3,6 +3,7 @@
 #include <stack>
 #include <vector>
 #include "parser.h"
+#include "tree.cpp"
 
 //mais informacao sobre tabela sintatica e a gramatica ll(1) nos documentos excel e word, respectivamente
 
@@ -27,19 +28,17 @@ Parser::Parser(std::string filename)
 	{
 	tokenBuffer.resize(tokenBufferLength);
 	//criar tabela sintatica
+
+	//PROGRAMA
 	map[std::make_pair(pPROGRAMA,PROGRAMAINICIO)] = {PROGRAMAINICIO,pDECLARACAO,EXECUCAOINICIO,pCOMANDOLISTA,FIMEXECUCAO,FIMPROGRAMA};
-
-	for(int i=PROGRAMAINICIO;i<$;i++){
-		map[std::make_pair(pDECLARACAO,i)] = {};
-	}
+	//DECLARACAO
+	//vazio
 	map[std::make_pair(pDECLARACAO,DEFINAINSTRUCAO)] = {DEFINAINSTRUCAO,ID,COMO,pCOMANDO,pDECLARACAO};
-
+	//BLOCO
 	map[std::make_pair(pBLOCO,INICIO)] = {INICIO,pCOMANDOLISTA,FIM};
 
-
-	for(int i= PROGRAMAINICIO;i<$;i++){
-		map[std::make_pair(pCOMANDOLISTA,i)] = {};
-	}
+	//COMANDOLISTA
+	//vazio
 	map[std::make_pair(pCOMANDOLISTA,INICIO)] = {pCOMANDO,pCOMANDOLISTA};
 	map[std::make_pair(pCOMANDOLISTA,REPITA)] = {pCOMANDO,pCOMANDOLISTA};
 	map[std::make_pair(pCOMANDOLISTA,ENQUANTO)] = {pCOMANDO,pCOMANDOLISTA};
@@ -52,7 +51,7 @@ Parser::Parser(std::string filename)
 	map[std::make_pair(pCOMANDOLISTA,APAGUE)] = {pCOMANDO,pCOMANDOLISTA};
 	map[std::make_pair(pCOMANDOLISTA,ACENDA)] = {pCOMANDO,pCOMANDOLISTA};
 	map[std::make_pair(pCOMANDOLISTA,AGUARDE)] = {pCOMANDO,pCOMANDOLISTA};
-
+	//COMANDO
 	map[std::make_pair(pCOMANDO,INICIO)] = {pBLOCO};
 	map[std::make_pair(pCOMANDO,REPITA)] = {pITERACAO};
 	map[std::make_pair(pCOMANDO,ENQUANTO)] = {pLACO};
@@ -65,19 +64,17 @@ Parser::Parser(std::string filename)
 	map[std::make_pair(pCOMANDO,APAGUE)] = {pINSTRUCAO};
 	map[std::make_pair(pCOMANDO,ACENDA)] = {pINSTRUCAO};
 	map[std::make_pair(pCOMANDO,AGUARDE)] = {pINSTRUCAO};
-
-	map[std::make_pair(pITERACAO,REPITA)] = {REPITA,NUMBER,VEZES,pCOMANDO,FIMREPITA};
-
+	//ITERACAO
+	map[std::make_pair(pITERACAO,REPITA)] = {REPITA,NUMERO,VEZES,pCOMANDO,FIMREPITA};
+	//LACO
 	map[std::make_pair(pLACO,ENQUANTO)] = {ENQUANTO,pCONDICAO,FACA,pCOMANDO,FIMPARA};
-
+	//CONDICIONAL
 	map[std::make_pair(pCONDICIONAL,SE)] = {SE,pCONDICAO,ENTAO,pCOMANDO,FIMSE,pCONDICIONALOPT};
-
-	for(int i= PROGRAMAINICIO;i<$;i++){
-		map[std::make_pair(pCONDICIONALOPT,i)] = {};
-	}
+	//CONDICIONALOPT
+	//vazio
 	map[std::make_pair(pCONDICIONALOPT,SENAO)] = {SENAO,pCOMANDO,FIMSENAO};
-
-	map[std::make_pair(pINSTRUCAO,MOVA)] = {MOVA,NUMBER,pINSTRUCAOOPT};
+	//INSTRUCAO
+	map[std::make_pair(pINSTRUCAO,MOVA)] = {MOVA,pNUMEROOPT,pINSTRUCAOOPT};
 	map[std::make_pair(pINSTRUCAO,VIRE)] = {VIRE,PARA,pSENTIDO};
 	map[std::make_pair(pINSTRUCAO,ID)] = {ID};
 	map[std::make_pair(pINSTRUCAO,PARE)] = {PARE};
@@ -85,41 +82,43 @@ Parser::Parser(std::string filename)
 	map[std::make_pair(pINSTRUCAO,APAGUE)] = {APAGUE,LAMPADA};
 	map[std::make_pair(pINSTRUCAO,ACENDA)] = {ACENDA,LAMPADA};
 	map[std::make_pair(pINSTRUCAO,AGUARDE)] = {AGUARDE,ATE,pCONDICAO};
-
-	for(int i= PROGRAMAINICIO;i<$;i++){
-		map[std::make_pair(pINSTRUCAOOPT,i)] = {};
-	}
+	//INSTRUCAOOPT
+	//VAZIO
 	map[std::make_pair(pINSTRUCAOOPT,PASSOS)] = {PASSOS};
-
+	//NUMEROOPT
+	//VAZIO
+	map[std::make_pair(pNUMEROOPT,NUMERO)] = {NUMERO};
+	//CONDICAO
 	map[std::make_pair(pCONDICAO,ROBO)] = {pCONDICAOROBO};
 	map[std::make_pair(pCONDICAO,LAMPADA)] = {pCONDICAOLAMPADA};
 	map[std::make_pair(pCONDICAO,PASSOS)] = {pCONDICAOROBO};
 	map[std::make_pair(pCONDICAO,FRENTE)] = {pCONDICAODIRECAO};
 	map[std::make_pair(pCONDICAO,ESQUERDA)] = {pCONDICAODIRECAO};
 	map[std::make_pair(pCONDICAO,DIREITA)] = {pCONDICAODIRECAO};
-
+	//CONDICAOROBO
 	map[std::make_pair(pCONDICAOROBO,ROBO)] = {ROBO,pESTADOROBO};
-
+	//ESTADOROBO
 	map[std::make_pair(pESTADOROBO,PRONTO)] = {PRONTO};
 	map[std::make_pair(pESTADOROBO,OCUPADO)] = {OCUPADO};
 	map[std::make_pair(pESTADOROBO,PARADO)] = {PARADO};
 	map[std::make_pair(pESTADOROBO,MOVIMENTANDO)] = {MOVIMENTANDO};
-
+	//CONDIAODIRECAO
 	map[std::make_pair(pCONDICAODIRECAO,FRENTE)] = {pDIRECAO,ROBO,BLOQUEADA};
 	map[std::make_pair(pCONDICAODIRECAO,ESQUERDA)] = {pDIRECAO,ROBO,BLOQUEADA};
 	map[std::make_pair(pCONDICAODIRECAO,DIREITA)] = {pDIRECAO,ROBO,BLOQUEADA};
-
+	//CONDICAOLAMPADA
 	map[std::make_pair(pCONDICAOLAMPADA,LAMPADA)] = {LAMPADA,pESTADOLAMPADA,A,pDIRECAO};
-
+	//DIRECAO
 	map[std::make_pair(pDIRECAO,FRENTE)] = {FRENTE};
 	map[std::make_pair(pDIRECAO,ESQUERDA)] = {ESQUERDA};
 	map[std::make_pair(pDIRECAO,DIREITA)] = {DIREITA};
-
+	//ESTADOLAMPADA
 	map[std::make_pair(pESTADOLAMPADA,APAGADA)] = {APAGADA};
 	map[std::make_pair(pESTADOLAMPADA,ACESA)] = {ACESA};
-
+	//SENTIDO
 	map[std::make_pair(pSENTIDO,ESQUERDA)] = {ESQUERDA};
 	map[std::make_pair(pSENTIDO,DIREITA)] = {DIREITA};
+
 
 }
 
@@ -139,13 +138,25 @@ void Parser::error(){
 	printf("ERRO\n");
 }
 
-void Parser::parse(){
-	std::stack<int> s;
+node * Parser::parse(){
+	std::stack<node*> s;
 	std::unordered_map<pair,std::vector<int>,hash_pair>::iterator it;
-	s.push($);
-	s.push(pPROGRAMA);
+
+
+	node *Z = new node;
+	Z->token = $;
+	node *head = new node;//<<
+	node *cur = head;
+	node *tmp;
+	head->token=pPROGRAMA;//<<
+
+
+	s.push(Z);
+	s.push(head);
+
+
 	loadBuffer();
-	int x = s.top();
+	int x = s.top()->token;
 	printf("x=%d\n",debug[x]);
 	int index = 0;
 	Token t;
@@ -155,31 +166,46 @@ void Parser::parse(){
 		std::cout << "Pilha >>" << debug[x] << std::endl;
 		if(x==t.getTag()){
 			s.pop();
-			printf("x==w\n");
 			index++;
+
+			printf("x==w\n");
 		}
 		else if(isTerminal(x)){
-			printf("ERRO::Terminal nao bate.\n");
 			s.pop();
 			index++;
+
+			tmp = new node;
+			tmp->token = ERROR;
+			cur->children.push_back(tmp);
+
+			printf("ERRO::Terminal nao bate.\n");
 		}
 		else if(isNonTerminal(x)){
+			s.pop();
 			it = map.find(std::make_pair(x,t.getTag()));
 			if(it!=map.end()){
-				s.pop();
+				node *arr[it->second.size()];
 				for(int i=it->second.size()-1;i>=0;i--){
-					s.push(it->second[i]);
+
+					arr[i] = new node[it->second.size()];
+					(arr[i])->token = it->second[i];
+
+					s.push(arr[i]);
 				}
-			}
-			else {
+
+				cur->children.insert(cur->children.begin(), arr, arr+it->second.size());
+
+			} else {
+
 				printf("ERRO: producao nao mapeada\n");
-				s.pop();
-				index++;
 			}
 		}
-		x=s.top();
+		cur = s.top();
+		x =s.top()->token;
 	}
 	std::cout << std::endl;
+
+	return head;
 }
 //teste
 

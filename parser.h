@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+struct node;
+
 class Parser : public Lexer{
 private:
 	std::vector<Token> tokenBuffer;
@@ -16,7 +18,7 @@ public:
 	void loadBuffer();
 	void error();
 	Token getNextToken();
-	void parse();
+	node * parse();
 };
 
 #endif

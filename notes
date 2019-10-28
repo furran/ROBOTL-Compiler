@@ -1,176 +1,46 @@
-enum firstSet {
-	fsPROGRAMAINICIO, fsDEFINAINSTRUCAO, fsINICIO, fsREPITA, fsENQUANTO, fsSE, fsSENAO,
-	fsMOVA, fsVIRE, fsID, fsPARE, fsFINALIZE, fsAPAGUE, fsACENDA, fsAGUARDE, fsPASSOS,
-	fsROBO, fsPRONTO, fsOCUPADO, fsPARADO, fsMOVIMENTANDO, fsLAMPADA, fsAPAGADA , fsACESA, fsFRENTE,
-	fsESQUERDA, fsDIREITA, $
-};
-//opt1
-enum terminals{
-	//terminais
-		PROGRAMAINICIO=0, FIMPROGRAMA, EXECUCAOINICIO,
-		FIMEXECUCAO, DEFINAINSTRUCAO, COMO, INICIO, FIM, REPITA,
-		VEZES, FIMREPITA, ENQUANTO, FACA, FIMPARA, SE, ENTAO,
-		FIMSE, SENAO, FIMSENAO, MOVA, PASSOS, VIRE, PARA, PARE,
-		FINALIZE, APAGUE, LAMPADA, ACENDA, AGUARDE,ATE,
-		ROBO ,PRONTO, OCUPADO, PARADO, MOVIMENTANDO,
-		BLOQUEADA, ACESA,A ,FRENTE,APAGADA, ESQUERDA, DIREITA,
-		ERROR, NUMBER, ID, END_OF_FILE
-};
+#include <iostream>
+#include <unordered_map>
+#include <stack>
+#include <vector>
+#include "parser.h"
+#include "tree.cpp"
 
-enum productions{
-	//producoes
-	pPROGRAMA=END_OF_FILE+1, pDECLARACAO, pBLOCO, pCOMANDOLISTA, pCOMANDO, pITERACAO, pLACO,
-	pCONDICIONAL, pCONDICIONALOPT, pINSTRUCAO, pINSTRUCAOOPT, pCONDICAO, pCONDICAOROBO,
-	pESTADOROBO,pCONDICAODIRECAO, pCONDICAOLAMPADA, pDIRECAO, pESTADOLAMPADA, pSENTIDO
+//mais informacao sobre tabela sintatica e a gramatica ll(1) nos documentos excel e word, respectivamente
+
+
+typedef std::pair<int,int> pair;
+
+struct hash_pair {
+    template <class T1, class T2>
+    size_t operator()(const std::pair<T1, T2>& p) const
+    {
+        auto hash1 = std::hash<T1>{}(p.first);
+        auto hash2 = std::hash<T2>{}(p.second);
+        return hash1 ^ hash2;
+    }
 };
 
-//opt2
+std::unordered_map<pair,std::vector<int>,hash_pair> map;
 
-enum terminalsANDproductions{
-		//terminais
-		PROGRAMAINICIO=0, FIMPROGRAMA, EXECUCAOINICIO,
-		FIMEXECUCAO, DEFINAINSTRUCAO, COMO, INICIO, FIM, REPITA,
-		VEZES, FIMREPITA, ENQUANTO, FACA, FIMPARA, SE, ENTAO,
-		FIMSE, SENAO, FIMSENAO, MOVA, PASSOS, VIRE, PARA, PARE,
-		FINALIZE, APAGUE, LAMPADA, ACENDA, AGUARDE,ATE,
-		ROBO ,PRONTO, OCUPADO, PARADO, MOVIMENTANDO,
-		BLOQUEADA, ACESA,A ,FRENTE,APAGADA, ESQUERDA, DIREITA,
-		ERROR, NUMBER, ID, END_OF_FILE,
-		//producoes
-		pPROGRAMA, pDECLARACAO, pBLOCO, pCOMANDOLISTA, pCOMANDO, pITERACAO, pLACO,
-		pCONDICIONAL, pCONDICIONALOPT, pINSTRUCAO, pINSTRUCAOOPT, pCONDICAO, pCONDICAOROBO,
-		pESTADOROBO,pCONDICAODIRECAO, pCONDICAOLAMPADA, pDIRECAO, pESTADOLAMPADA, pSENTIDO,
-		//simbolo de pilha vazia
-		$
-};
-
-
-std::vector<std::string> padroes;
-	padroes.reserve(symbolTable.size());
-	std::vector<Token> tokens;
-	tokens.reserve(symbolTable.size());
-
-	for(auto kv : symbolTable) {
-	    padroes.push_back(kv.first);
-	    tokens.push_back(kv.second);
-	}
-	cout << "# Padroes: ";
-	for(auto k : padroes){
-		cout << k<< " | ";
-	}
-	cout << endl << "# Tags: ";
-	for(auto v : tag){
-			cout << v << " | ";
-		}
-	cout << endl;
-	
-	
-		while(true){
-		Token t = parser.scan();
-		int tipo = t.getTag();
-		cout << "Token: < " << tag[tipo] << " , " << t.lexeme << " >\n";
-
-		if(tipo == END_OF_FILE)break;
-	}
-	
-//se tudo der errado. me use
-Parser::Parser(std::string filename)
-	: Lexer(filename)
-	{
-	buffer.resize(bufferLength);
-	//criar tabela sintatica
-	map[std::make_pair(pPROGRAMA,PROGRAMAINICIO)] = {PROGRAMAINICIO,pDECLARACAO,EXECUCAOINICIO,pCOMANDO,FIMEXECUCAO,FIMPROGRAMA};
-
-	map[std::make_pair(pDECLARACAO,DEFINAINSTRUCAO)] = {DEFINAINSTRUCAO,ID,COMO,pCOMANDO,pDECLARACAO};
-	map[std::make_pair(pDECLARACAO,$)] = {$};
-
-	map[std::make_pair(pBLOCO,INICIO)] = {INICIO,pCOMANDOLISTA};
-
-	map[std::make_pair(pCOMANDOLISTA,INICIO)] = {pCOMANDO,pCOMANDOLISTA};
-	map[std::make_pair(pCOMANDOLISTA,REPITA)] = {pCOMANDO,pCOMANDOLISTA};
-	map[std::make_pair(pCOMANDOLISTA,ENQUANTO)] = {pCOMANDO,pCOMANDOLISTA};
-	map[std::make_pair(pCOMANDOLISTA,SE)] = {pCOMANDO,pCOMANDOLISTA};
-	map[std::make_pair(pCOMANDOLISTA,MOVA)] = {pCOMANDO,pCOMANDOLISTA};
-	map[std::make_pair(pCOMANDOLISTA,VIRE)] = {pCOMANDO,pCOMANDOLISTA};
-	map[std::make_pair(pCOMANDOLISTA,ID)] = {pCOMANDO,pCOMANDOLISTA};
-	map[std::make_pair(pCOMANDOLISTA,PARE)] = {pCOMANDO,pCOMANDOLISTA};
-	map[std::make_pair(pCOMANDOLISTA,FINALIZE)] = {pCOMANDO,pCOMANDOLISTA};
-	map[std::make_pair(pCOMANDOLISTA,APAGUE)] = {pCOMANDO,pCOMANDOLISTA};
-	map[std::make_pair(pCOMANDOLISTA,ACENDA)] = {pCOMANDO,pCOMANDOLISTA};
-	map[std::make_pair(pCOMANDOLISTA,AGUARDE)] = {pCOMANDO,pCOMANDOLISTA};
-	map[std::make_pair(pCOMANDOLISTA,$)] = {$};
-
-	map[std::make_pair(pCOMANDO,INICIO)] = {pBLOCO};
-	map[std::make_pair(pCOMANDO,REPITA)] = {pITERACAO};
-	map[std::make_pair(pCOMANDO,ENQUANTO)] = {pLACO};
-	map[std::make_pair(pCOMANDO,SE)] = {pCONDICIONAL};
-	map[std::make_pair(pCOMANDO,MOVA)] = {pINSTRUCAO};
-	map[std::make_pair(pCOMANDO,VIRE)] = {pINSTRUCAO};
-	map[std::make_pair(pCOMANDO,ID)] = {pINSTRUCAO};
-
-	map[std::make_pair(pITERACAO,REPITA)] = {REPITA,NUMBER,VEZES,pCOMANDO,FIMREPITA};
-
-	map[std::make_pair(pLACO,ENQUANTO)] = {ENQUANTO,pCONDICAO,FACA,pCOMANDO,FIMPARA};
-
-	map[std::make_pair(pCONDICIONAL,SE)] = {SE,pCONDICAO,ENTAO,pCOMANDO,FIMSE,pCONDICIONALOPT};
-
-	map[std::make_pair(pCONDICIONALOPT,SENAO)] = {SENAO,pCOMANDO,FIMSENAO};
-	map[std::make_pair(pCONDICIONALOPT,$)] = {$};
-
-	map[std::make_pair(pINSTRUCAO,MOVA)] = {MOVA,NUMBER,pINSTRUCAOOPT};
-	map[std::make_pair(pINSTRUCAO,VIRE)] = {VIRE,PARA,pSENTIDO};
-	map[std::make_pair(pINSTRUCAO,ID)] = {ID};
-	map[std::make_pair(pINSTRUCAO,PARE)] = {PARE};
-	map[std::make_pair(pINSTRUCAO,FINALIZE)] = {FINALIZE};
-	map[std::make_pair(pINSTRUCAO,APAGUE)] = {APAGUE,LAMPADA};
-	map[std::make_pair(pINSTRUCAO,ACENDA)] = {ACENDA,LAMPADA};
-
-	map[std::make_pair(pINSTRUCAOOPT,PASSOS)] = {PASSOS};
-	map[std::make_pair(pINSTRUCAOOPT,$)] = {$};
-
-	map[std::make_pair(pCONDICAO,ROBO)] = {pCONDICAOROBO};
-	map[std::make_pair(pCONDICAO,LAMPADA)] = {pCONDICAOLAMPADA};
-	map[std::make_pair(pCONDICAO,PASSOS)] = {pCONDICAOROBO};
-	map[std::make_pair(pCONDICAO,FRENTE)] = {pCONDICAODIRECAO};
-	map[std::make_pair(pCONDICAO,ESQUERDA)] = {pCONDICAODIRECAO};
-	map[std::make_pair(pCONDICAO,DIREITA)] = {pCONDICAODIRECAO};
-
-	map[std::make_pair(pCONDICAOROBO,ROBO)] = {ROBO,pESTADOROBO};
-
-	map[std::make_pair(pESTADOROBO,PRONTO)] = {PRONTO};
-	map[std::make_pair(pESTADOROBO,OCUPADO)] = {OCUPADO};
-	map[std::make_pair(pESTADOROBO,PARADO)] = {PARADO};
-	map[std::make_pair(pESTADOROBO,MOVIMENTANDO)] = {MOVIMENTANDO};
-
-	map[std::make_pair(pCONDICAODIRECAO,FRENTE)] = {pDIRECAO,ROBO,BLOQUEADA};
-	map[std::make_pair(pCONDICAODIRECAO,ESQUERDA)] = {pDIRECAO,ROBO,BLOQUEADA};
-	map[std::make_pair(pCONDICAODIRECAO,DIREITA)] = {pDIRECAO,ROBO,BLOQUEADA};
-
-	map[std::make_pair(pCONDICAOLAMPADA,LAMPADA)] = {LAMPADA,pESTADOLAMPADA,A,pDIRECAO};
-
-	map[std::make_pair(pDIRECAO,FRENTE)] = {FRENTE};
-	map[std::make_pair(pDIRECAO,ESQUERDA)] = {ESQUERDA};
-	map[std::make_pair(pDIRECAO,DIREITA)] = {DIREITA};
-
-	map[std::make_pair(pESTADOLAMPADA,APAGADA)] = {APAGADA};
-	map[std::make_pair(pESTADOLAMPADA,ACESA)] = {ACESA};
-
-	map[std::make_pair(pSENTIDO,ESQUERDA)] = {ESQUERDA};
-	map[std::make_pair(pSENTIDO,DIREITA)] = {DIREITA};
-
-}
 
 Parser::Parser(std::string filename)
 	: Lexer(filename)
 	{
-	buffer.resize(bufferLength);
+	tokenBuffer.resize(tokenBufferLength);
 	//criar tabela sintatica
-	map[std::make_pair(pPROGRAMA,PROGRAMAINICIO)] = {PROGRAMAINICIO,pDECLARACAO,EXECUCAOINICIO,pCOMANDO,FIMEXECUCAO,FIMPROGRAMA};
+	map[std::make_pair(pPROGRAMA,PROGRAMAINICIO)] = {PROGRAMAINICIO,pDECLARACAO,EXECUCAOINICIO,pCOMANDOLISTA,FIMEXECUCAO,FIMPROGRAMA};
 
+	for(int i=PROGRAMAINICIO;i<$;i++){
+		map[std::make_pair(pDECLARACAO,i)] = {};
+	}
 	map[std::make_pair(pDECLARACAO,DEFINAINSTRUCAO)] = {DEFINAINSTRUCAO,ID,COMO,pCOMANDO,pDECLARACAO};
 
-	map[std::make_pair(pBLOCO,INICIO)] = {INICIO,pCOMANDOLISTA};
+	map[std::make_pair(pBLOCO,INICIO)] = {INICIO,pCOMANDOLISTA,FIM};
 
+
+	for(int i= PROGRAMAINICIO;i<$;i++){
+		map[std::make_pair(pCOMANDOLISTA,i)] = {};
+	}
 	map[std::make_pair(pCOMANDOLISTA,INICIO)] = {pCOMANDO,pCOMANDOLISTA};
 	map[std::make_pair(pCOMANDOLISTA,REPITA)] = {pCOMANDO,pCOMANDOLISTA};
 	map[std::make_pair(pCOMANDOLISTA,ENQUANTO)] = {pCOMANDO,pCOMANDOLISTA};
@@ -196,13 +66,16 @@ Parser::Parser(std::string filename)
 	map[std::make_pair(pCOMANDO,APAGUE)] = {pINSTRUCAO};
 	map[std::make_pair(pCOMANDO,ACENDA)] = {pINSTRUCAO};
 	map[std::make_pair(pCOMANDO,AGUARDE)] = {pINSTRUCAO};
-	
+
 	map[std::make_pair(pITERACAO,REPITA)] = {REPITA,NUMBER,VEZES,pCOMANDO,FIMREPITA};
 
 	map[std::make_pair(pLACO,ENQUANTO)] = {ENQUANTO,pCONDICAO,FACA,pCOMANDO,FIMPARA};
 
 	map[std::make_pair(pCONDICIONAL,SE)] = {SE,pCONDICAO,ENTAO,pCOMANDO,FIMSE,pCONDICIONALOPT};
 
+	for(int i= PROGRAMAINICIO;i<$;i++){
+		map[std::make_pair(pCONDICIONALOPT,i)] = {};
+	}
 	map[std::make_pair(pCONDICIONALOPT,SENAO)] = {SENAO,pCOMANDO,FIMSENAO};
 
 	map[std::make_pair(pINSTRUCAO,MOVA)] = {MOVA,NUMBER,pINSTRUCAOOPT};
@@ -212,7 +85,11 @@ Parser::Parser(std::string filename)
 	map[std::make_pair(pINSTRUCAO,FINALIZE)] = {FINALIZE};
 	map[std::make_pair(pINSTRUCAO,APAGUE)] = {APAGUE,LAMPADA};
 	map[std::make_pair(pINSTRUCAO,ACENDA)] = {ACENDA,LAMPADA};
+	map[std::make_pair(pINSTRUCAO,AGUARDE)] = {AGUARDE,ATE,pCONDICAO};
 
+	for(int i= PROGRAMAINICIO;i<$;i++){
+		map[std::make_pair(pINSTRUCAOOPT,i)] = {};
+	}
 	map[std::make_pair(pINSTRUCAOOPT,PASSOS)] = {PASSOS};
 
 	map[std::make_pair(pCONDICAO,ROBO)] = {pCONDICAOROBO};
@@ -245,14 +122,91 @@ Parser::Parser(std::string filename)
 	map[std::make_pair(pSENTIDO,ESQUERDA)] = {ESQUERDA};
 	map[std::make_pair(pSENTIDO,DIREITA)] = {DIREITA};
 
+
 }
 
-struct hash_pair {
-    template <class T1, class T2>
-    size_t operator()(const std::pair<T1, T2>& p) const
-    {
-        auto hash1 = std::hash<T1>{}(p.first);
-        auto hash2 = std::hash<T2>{}(p.second);
-        return hash1 ^ hash2;
-    }
-};
+Parser::~Parser() {
+
+}
+
+void Parser::loadBuffer(){
+	for(int i=0;i<tokenBufferLength;i++){
+		tokenBuffer[i] = scan();
+		if(tokenBuffer[i].getTag()==END_OF_FILE)break;
+	}
+}
+
+
+void Parser::error(){
+	printf("ERRO\n");
+}
+
+void Parser::parse(){
+	std::stack<int> s;
+	std::unordered_map<pair,std::vector<int>,hash_pair>::iterator it;
+
+	node *head = new node;//<<
+	node *cur = head;
+
+
+	s.push($);
+	s.push(pPROGRAMA);
+
+	head->token=pPROGRAMA;//<<
+
+	loadBuffer();
+	int x = s.top();
+	printf("x=%d\n",debug[x]);
+	int index = 0;
+	Token t;
+	while(x!=$){
+		t = tokenBuffer[index];
+		std::cout<<"token= " << tag[t.getTag()]<<std::endl;
+		std::cout << "Pilha >>" << debug[x] << std::endl;
+		if(x==t.getTag()){
+			s.pop();
+			index++;
+
+			node *tmp = new node;
+			tmp->token = x;
+			cur->children.push_back(tmp);
+
+			printf("x==w\n");
+		}
+		else if(isTerminal(x)){
+			s.pop();
+			index++;
+
+			node *tmp = new node;
+			tmp->token = ERROR;
+			cur->children.push_back(tmp);
+
+			printf("ERRO::Terminal nao bate.\n");
+		}
+		else if(isNonTerminal(x)){
+			it = map.find(std::make_pair(x,t.getTag()));
+			if(it!=map.end()){
+				s.pop();
+				for(int i=it->second.size()-1;i>=0;i--){
+					s.push(it->second[i]);
+
+					node *tmp = new node;
+					tmp->token = it->second[i];
+					cur->children.push_back(tmp);
+					if (isNonTerminal(tmp->token)) {
+
+					}
+				}
+			} else {
+				s.pop();
+				index++;
+				printf("ERRO: producao nao mapeada\n");
+			}
+		}
+
+		x=s.top();
+	}
+	std::cout << std::endl;
+}
+//teste
+
