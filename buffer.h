@@ -9,7 +9,7 @@ private:
 	std::string* getOtherBuffer();
 	void load();
 public:
-	const unsigned int length = 4096;
+	const unsigned int length;
 	std::ifstream file;
 	std::string *curBuff;
 	std::string buff1;

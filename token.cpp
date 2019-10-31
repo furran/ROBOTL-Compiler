@@ -1,11 +1,13 @@
-#ifndef TOKEN_H_
-#define TOKEN_H_
+#ifndef TOKEN_CPP_
+#define TOKEN_CPP_
 
 #include <string>
 
 class Token {
 public:
 	int tag;
+	int line;
+	int value;
 	std::string lexeme;
 
 	Token()
@@ -13,8 +15,8 @@ public:
 	{
 	}
 
-	Token(int t, std::string lex)
-	: tag(t), lexeme(lex)
+	Token(int t,int l, std::string lex)
+	: tag(t), line(l), value(0), lexeme(lex)
 	{
 	}
 
@@ -22,10 +24,21 @@ public:
 		return tag;
 	}
 
-	const std::string getLexeme(){
+	int getLine(){
+		return line;
+	}
+
+	std::string getLexeme(){
 		return lexeme;
 	}
 
+	void setValue(int v){
+		value = v;
+	}
+
+	int getValue(){
+		return value;
+	}
 };
 
 #endif

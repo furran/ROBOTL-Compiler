@@ -1,7 +1,8 @@
 #include "buffer.h"
 
 Buffer::Buffer(std::string filename) :
-		buff1(), buff2(), beginLex(0), forward(0) {
+		length(4096), buff1(), buff2(), beginLex(0), forward(0)
+{
 	buff1.resize(length);
 	buff2.resize(length);
 	file.open(filename, std::ios::in | std::ios::binary);
@@ -29,7 +30,7 @@ std::string* Buffer::getOtherBuffer(){
 	else if(curBuff == &buff2){
 		return &buff1;
 	}
-	printf("error:: Buffer::getOtherBuffer() failed. (in file  >> token.cpp <<)\n");
+	printf("error:: Buffer::getOtherBuffer() falhou. (in file  >> token.cpp <<)\n");
 	return NULL;
 
 }
@@ -41,12 +42,11 @@ void Buffer::load(){
 		transform(curBuff->begin(), curBuff->end(), curBuff->begin(), ::tolower);
 		if(file.eof()){
 			int howManyLeft = file.gcount();
-			curBuff->operator [](howManyLeft) = -1;
+			(*curBuff)[howManyLeft] = -1;
 		}
 	}
 }
 
-//esse codigo ta mangueado mas fzer o q
 char Buffer::next(){
 	int x = forward;
 	std::string * buff = curBuff;
@@ -56,7 +56,7 @@ char Buffer::next(){
 		curBuff = this->getOtherBuffer();
 		this->load();
 	}
-	return buff->operator [](x);
+	return (*buff)[x];
 }
 
 void Buffer::retract(){
@@ -68,7 +68,7 @@ void Buffer::fail(){
 }
 
 char Buffer::lookAhead(){
-	return curBuff->operator [](forward);
+	return (*curBuff)[forward];
 }
 
 void Buffer::beginLexeme(){

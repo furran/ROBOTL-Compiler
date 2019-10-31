@@ -10,13 +10,13 @@ Lexer::Lexer(std::string filename) :
 	peek = ' ';
 	for (int i = 0, keyword = PROGRAMAINICIO; i < NUMBER_OF_KEYWORDS;
 			i++, keyword++) {
-		Token w(keyword, keywords[i]);
+		Token w(keyword,0, keywords[i]);
 		install(w);
 	}
 }
 
 void Lexer::install(Token w) {
-	symbolTable.insert(std::make_pair((std::string) w.lexeme, w)); // @suppress("Invalid arguments")
+	reservedWords.insert(std::make_pair((std::string) w.lexeme, w)); // @suppress("Invalid arguments")
 }
 
 void Lexer::deleteUntilDelimiter() {
@@ -41,7 +41,7 @@ Token Lexer::scan() {
 					line++;
 					break;
 				} else if (peek == END_FILE) {
-					Token t(END_OF_FILE, "");
+					Token t(END_OF_FILE, line, "");
 					return t;
 				}
 			}
@@ -65,9 +65,6 @@ Token Lexer::scan() {
 						<< ": Limite de caracteres(150) excedido para o identificador. Desconsiderando caracteres seguintes....>>"
 						<< lex << "<<" << std::endl;
 				deleteUntilDelimiter();
-				Token w(ID, lex);
-				symbolTable.insert(std::make_pair(lex, w)); // @suppress("Invalid arguments")
-				return w;
 			}
 
 		}
@@ -85,15 +82,16 @@ Token Lexer::scan() {
 		}
 
 
-		std::unordered_map<std::string, Token>::iterator it = symbolTable.find(
+		std::unordered_map<std::string, Token>::iterator it = reservedWords.find(
 				lex);
 
-		if (it != symbolTable.end()) {
-			return it->second;
+		if (it != reservedWords.end()) {
+			Token w(it->second.getTag(),line,it->second.getLexeme());
+			return w;
 		}
 
-		Token w(ID, lex);
-		symbolTable.insert(std::make_pair(lex, w));
+		Token w(ID,line ,lex);
+		std::cout << "LEXEMA W: " <<  w.getLexeme() << std::endl;
 		return w;
 	}
 	// tokeniza numero
@@ -108,7 +106,7 @@ Token Lexer::scan() {
 				std::cout << "ERRO::LINHA:" << line
 						<< ": O numero execede o limite de digitos(9),  >>"
 						<< lex << "<<.\n";
-				return Token(ERROR, "NUMBER_TOO_BIG");
+				return Token(ERROR,line, "NUMBER_TOO_BIG");
 			}
 		}
 
@@ -123,14 +121,14 @@ Token Lexer::scan() {
 			std::cout << "ERRO::LINHA:" << line << ": Numero mal formado. >> "
 					<< lex << " <<\n";
 
-			return Token(ERROR, "NUMBER_MALFORMED");
+			return Token(ERROR,line, "NUMBER_MALFORMED");
 		}
 
-		Token num(NUMERO, lex);
+		Token num(NUMERO,line, lex);
 		return num;
 	}
 	if (peek == END_FILE) {
-		Token t(END_OF_FILE, "");
+		Token t(END_OF_FILE,line, "");
 		return t;
 	} else {
 		std::string lex("");
@@ -143,7 +141,7 @@ Token Lexer::scan() {
 				<< lex << "\n";
 	}
 
-	Token t(ERROR, "");
+	Token t(ERROR,line, "");
 	return t;
 }
 

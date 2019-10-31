@@ -6,19 +6,18 @@
 
 struct node;
 
-class Parser : public Lexer{
+class Parser{
 private:
 	std::vector<Token> tokenBuffer;
-	const unsigned int tokenBufferLength = 2048;
 public:
 
-	Parser(std::string filename);
+	Parser();
 	virtual ~Parser();
 
-	void loadBuffer();
+	void loadBuffer(std::vector<Token>& v);
 	void error();
 	Token getNextToken();
-	node * parse();
+	node * parse(std::vector<Token> &v);
 };
 
 #endif

@@ -4,6 +4,7 @@
 #include "table.cpp"
 #include "buffer.cpp"
 #include "parser.cpp"
+#include "semantic.cpp"
 
 using namespace std;
 
@@ -12,24 +13,38 @@ int main(){
 
 	cout << "Digite o nome do arquivo: " << endl;
 	cin >> filename;
-	Parser parser(filename);
+	Lexer lexer(filename);
+	vector<Token> v;
+	int length = 4096;
+	v.resize(length);
 
-	unordered_map<int,int> m;
+	int i =  0;
+	int j = 1;
+	while(true){
 
-	m[1] = 2;
+		v[i] =lexer.scan();
+		if(v[i].getTag()== END_OF_FILE) break;
+		i++;
+		if(i >= 4096) {
+			j++;
+			v.resize(length*j);
+		}
 
-	m[1] = 10;
+	}
 
-	cout << m[1] << endl;
+	Parser parser;
 
 	cout << "++++++++++++++" << endl;
 
-	node * tree = parser.parse();
-
+	node * tree = parser.parse(v);
 
 	cout << "++++++++++++++" << endl;
-	cout << "LINES READ: " << parser.line << endl;
+	cout << "LINES READ: " << lexer.line << endl;
 	cout << "sucesso" << endl;
-
 	printTree(tree);
+	printf("##################\n");
+	printLeaves(tree);
+	printf("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n");
+	analyse(tree);
+
 }

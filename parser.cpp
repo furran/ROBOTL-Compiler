@@ -5,11 +5,11 @@
 #include "parser.h"
 #include "tree.cpp"
 
-//mais informacao sobre tabela sintatica e a gramatica ll(1) nos documentos excel e word, respectivamente
+//mais informacao sobre tabela sintatica e a gramatica adaptada(ll(1)) nos documentos excel e word, respectivamente
 
 
 typedef std::pair<int,int> pair;
-
+//FUNCAO HASH PARA PAR DE CHAVES
 struct hash_pair {
     template <class T1, class T2>
     size_t operator()(const std::pair<T1, T2>& p) const
@@ -23,17 +23,16 @@ struct hash_pair {
 std::unordered_map<pair,std::vector<int>,hash_pair> map;
 
 
-Parser::Parser(std::string filename)
-	: Lexer(filename)
+Parser::Parser()
 	{
-	tokenBuffer.resize(tokenBufferLength);
-	//criar tabela sintatica
+	//++++ CRIA TABELA SINTATICA +++++
 
 	//PROGRAMA
 	map[std::make_pair(pPROGRAMA,PROGRAMAINICIO)] = {PROGRAMAINICIO,pDECLARACAO,EXECUCAOINICIO,pCOMANDOLISTA,FIMEXECUCAO,FIMPROGRAMA};
 	//DECLARACAO
 	//vazio
-	map[std::make_pair(pDECLARACAO,DEFINAINSTRUCAO)] = {DEFINAINSTRUCAO,ID,COMO,pCOMANDO,pDECLARACAO};
+	map[std::make_pair(pDECLARACAO,DEFINAINSTRUCAO)] = {DEFINAINSTRUCAO,ID,REGRA1,COMO,pCOMANDO,pDECLARACAO}; // << REGRA 1
+	map[std::make_pair(pDECLARACAO,VAZIO)] = {};
 	//BLOCO
 	map[std::make_pair(pBLOCO,INICIO)] = {INICIO,pCOMANDOLISTA,FIM};
 
@@ -51,6 +50,7 @@ Parser::Parser(std::string filename)
 	map[std::make_pair(pCOMANDOLISTA,APAGUE)] = {pCOMANDO,pCOMANDOLISTA};
 	map[std::make_pair(pCOMANDOLISTA,ACENDA)] = {pCOMANDO,pCOMANDOLISTA};
 	map[std::make_pair(pCOMANDOLISTA,AGUARDE)] = {pCOMANDO,pCOMANDOLISTA};
+	map[std::make_pair(pCOMANDOLISTA,VAZIO)] = {};
 	//COMANDO
 	map[std::make_pair(pCOMANDO,INICIO)] = {pBLOCO};
 	map[std::make_pair(pCOMANDO,REPITA)] = {pITERACAO};
@@ -73,10 +73,11 @@ Parser::Parser(std::string filename)
 	//CONDICIONALOPT
 	//vazio
 	map[std::make_pair(pCONDICIONALOPT,SENAO)] = {SENAO,pCOMANDO,FIMSENAO};
+	map[std::make_pair(pCONDICIONALOPT,VAZIO)] = {};
 	//INSTRUCAO
-	map[std::make_pair(pINSTRUCAO,MOVA)] = {MOVA,pNUMEROOPT,pINSTRUCAOOPT};
+	map[std::make_pair(pINSTRUCAO,MOVA)] = {MOVA,pNUMEROOPT,pINSTRUCAOOPT, REGRA5}; // << REGRA 5
 	map[std::make_pair(pINSTRUCAO,VIRE)] = {VIRE,PARA,pSENTIDO};
-	map[std::make_pair(pINSTRUCAO,ID)] = {ID};
+	map[std::make_pair(pINSTRUCAO,ID)] = {ID, REGRA2}; // << REGRA 2
 	map[std::make_pair(pINSTRUCAO,PARE)] = {PARE};
 	map[std::make_pair(pINSTRUCAO,FINALIZE)] = {FINALIZE};
 	map[std::make_pair(pINSTRUCAO,APAGUE)] = {APAGUE,LAMPADA};
@@ -85,9 +86,11 @@ Parser::Parser(std::string filename)
 	//INSTRUCAOOPT
 	//VAZIO
 	map[std::make_pair(pINSTRUCAOOPT,PASSOS)] = {PASSOS};
+	map[std::make_pair(pINSTRUCAOOPT,VAZIO)] = {};
 	//NUMEROOPT
 	//VAZIO
 	map[std::make_pair(pNUMEROOPT,NUMERO)] = {NUMERO};
+	map[std::make_pair(pNUMEROOPT,VAZIO)] = {};
 	//CONDICAO
 	map[std::make_pair(pCONDICAO,ROBO)] = {pCONDICAOROBO};
 	map[std::make_pair(pCONDICAO,LAMPADA)] = {pCONDICAOLAMPADA};
@@ -103,9 +106,9 @@ Parser::Parser(std::string filename)
 	map[std::make_pair(pESTADOROBO,PARADO)] = {PARADO};
 	map[std::make_pair(pESTADOROBO,MOVIMENTANDO)] = {MOVIMENTANDO};
 	//CONDIAODIRECAO
-	map[std::make_pair(pCONDICAODIRECAO,FRENTE)] = {pDIRECAO,ROBO,BLOQUEADA};
-	map[std::make_pair(pCONDICAODIRECAO,ESQUERDA)] = {pDIRECAO,ROBO,BLOQUEADA};
-	map[std::make_pair(pCONDICAODIRECAO,DIREITA)] = {pDIRECAO,ROBO,BLOQUEADA};
+	map[std::make_pair(pCONDICAODIRECAO,FRENTE)] = {FRENTE,ROBO,BLOQUEADA};
+	map[std::make_pair(pCONDICAODIRECAO,ESQUERDA)] = {ESQUERDA,ROBO,BLOQUEADA};
+	map[std::make_pair(pCONDICAODIRECAO,DIREITA)] = {DIREITA,ROBO,BLOQUEADA};
 	//CONDICAOLAMPADA
 	map[std::make_pair(pCONDICAOLAMPADA,LAMPADA)] = {LAMPADA,pESTADOLAMPADA,A,pDIRECAO};
 	//DIRECAO
@@ -116,8 +119,8 @@ Parser::Parser(std::string filename)
 	map[std::make_pair(pESTADOLAMPADA,APAGADA)] = {APAGADA};
 	map[std::make_pair(pESTADOLAMPADA,ACESA)] = {ACESA};
 	//SENTIDO
-	map[std::make_pair(pSENTIDO,ESQUERDA)] = {ESQUERDA};
-	map[std::make_pair(pSENTIDO,DIREITA)] = {DIREITA};
+	map[std::make_pair(pSENTIDO,ESQUERDA)] = {ESQUERDA, REGRA3}; // REGRA 3
+	map[std::make_pair(pSENTIDO,DIREITA)] = {DIREITA, REGRA4}; // REGRA 4
 
 
 }
@@ -126,11 +129,8 @@ Parser::~Parser() {
 
 }
 
-void Parser::loadBuffer(){
-	for(int i=0;i<tokenBufferLength;i++){
-		tokenBuffer[i] = scan();
-		if(tokenBuffer[i].getTag()==END_OF_FILE)break;
-	}
+void Parser::loadBuffer(std::vector<Token> &v){
+	tokenBuffer.swap(v);
 }
 
 
@@ -138,74 +138,92 @@ void Parser::error(){
 	printf("ERRO\n");
 }
 
-node * Parser::parse(){
+node * Parser::parse(std::vector<Token> &v){
 	std::stack<node*> s;
 	std::unordered_map<pair,std::vector<int>,hash_pair>::iterator it;
-
+	std::vector<int> frase;
 
 	node *Z = new node;
-	Z->token = $;
 	node *head = new node;//<<
 	node *cur = head;
+	node *pai = cur;
 	node *tmp;
-	head->token=pPROGRAMA;//<<
 
+	int regra;
+
+	head->token.tag=pPROGRAMA;//<<
+	Z->token.tag = $;
 
 	s.push(Z);
 	s.push(head);
 
-
-	loadBuffer();
-	int x = s.top()->token;
+	loadBuffer(v);
+	int x = s.top()->token.getTag();
 	printf("x=%d\n",debug[x]);
 	int index = 0;
 	Token t;
 	while(x!=$){
 		t = tokenBuffer[index];
+		std::cout << "TOKEN: " << t.getLexeme() << std::endl;
 		std::cout<<"token= " << tag[t.getTag()]<<std::endl;
 		std::cout << "Pilha >>" << debug[x] << std::endl;
-		if(x==t.getTag()){
+		if(x==t.getTag()){ // SE FOR TERMINAL E BATE COM O TOKEN
 			s.pop();
 			index++;
-
+			cur->token = t;
 			printf("x==w\n");
 		}
-		else if(isTerminal(x)){
+		else if(isTerminal(x)){ //SE FOR UM TERMINAL E NAO BATE COM O TOKEN ATUAL
 			s.pop();
 			index++;
 
 			tmp = new node;
-			tmp->token = ERROR;
+			tmp->token = t;
 			cur->children.push_back(tmp);
 
-			printf("ERRO::Terminal nao bate.\n");
+			printf("ERRO::LINHA:%d: Terminal nao bate.\n", t.getLine());
 		}
-		else if(isNonTerminal(x)){
+		else if(isNonTerminal(x)){ //SE FOR UMA VARIAVEL
+			pai = s.top();
 			s.pop();
 			it = map.find(std::make_pair(x,t.getTag()));
 			if(it!=map.end()){
 				node *arr[it->second.size()];
 				for(int i=it->second.size()-1;i>=0;i--){
 
-					arr[i] = new node[it->second.size()];
-					(arr[i])->token = it->second[i];
+					arr[i] = new node;
+					(arr[i])->token.tag = it->second[i];
 
 					s.push(arr[i]);
 				}
 
 				cur->children.insert(cur->children.begin(), arr, arr+it->second.size());
 
-			} else {
-
-				printf("ERRO: producao nao mapeada\n");
+			} else{//SE TIVER PRODUCAO VAZIA
+				it = map.find(std::make_pair(x,VAZIO));
+				if(map.find(std::make_pair(x,VAZIO))!=map.end()){
+					tmp = new node;
+					tmp->token.tag = VAZIO;
+					cur->children.push_back(tmp);
+				}
+				else printf("ERRO::LINHA:%d: Producao incapaz de gerar o token.\n", t.getLine());
 			}
 		}
+		else if(isRegra(x)){
+			s.pop();
+		}
+
+
 		cur = s.top();
-		x =s.top()->token;
+		x = s.top()->token.getTag();
+
+	}
+	std::cout << std::endl << "tokenBuffer: ";
+
+	for(int i=0;i<tokenBuffer.size();i++){
+		std::cout << debug[tokenBuffer[i].getTag()] << " ";
 	}
 	std::cout << std::endl;
-
 	return head;
 }
-//teste
 
