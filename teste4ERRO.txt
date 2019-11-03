@@ -1,0 +1,25 @@
+programainicio
+DEFINAINSTRUCAO Trilha COMO #cOmentario #1 @@_#
+ INICIO
+   Mova 3 passos
+   Aguarde Ate Robo Pronto
+   Vire Para ESQUERDA
+   Apague Lampada
+   Vire Para DIREITA
+   Mova 1 passos
+   Aguarde Ate Robo Pronto
+ FIM
+definainstrucao trilha como
+inicio
+mova 2 passos
+aguarde ate robo pronto
+fim
+ EXECUCAOINICIO
+   se esquerda robo bloqueada ENTAO mova 3 fimse
+   Repita 3 VEZES lol FIMREPITA
+   Vire Para DIREITA
+   vire para esquerda
+	#PROGRAMAINICIO
+ FIMEXECUCAO
+FIMPROGRAMA
+#comentario 3
