@@ -30,14 +30,15 @@ node * analyse(node * n) {
 	for(int i=0;i<v.size();i++){
 		switch (v[i]->token.getTag()) {
 			case REGRA1: {
-				if(symbolTable.count(v[i]->token.getLexeme()) == false){
-					symbolTable[v[i-1]->token.getLexeme()] = v[i-1]->token;
+				int x = i-1;
+				if(symbolTable.count(v[x]->token.getLexeme()) == false){
+					symbolTable[v[x]->token.getLexeme()] = v[x]->token;
 				}
-				else printf("ERRO::LINHA:%d: Mais de uma instrucao o com mesmo identicador foram detectadas.\n",v[i-1]->token.getLine());
+				else printf("ERRO::LINHA:%d: Mais de uma instrucao com o mesmo identicador foram declaradas.\n",v[i-1]->token.getLine());
 				break;
 			}
 			case REGRA2: {
-				if (symbolTable.count(v[i]->token.getLexeme()) == false) {
+				if (symbolTable.count(v[i-1]->token.getLexeme()) == false) {
 					printf("ERRO::LINHA:%d: Referencia a instrucao nao declarada.\n",v[i - 1]->token.getLine());
 				}
 				break;
