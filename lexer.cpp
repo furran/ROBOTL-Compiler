@@ -91,7 +91,6 @@ Token Lexer::scan() {
 		}
 
 		Token w(ID,line ,lex);
-		std::cout << "LEXEMA W: " <<  w.getLexeme() << std::endl;
 		return w;
 	}
 	// tokeniza numero
@@ -104,7 +103,7 @@ Token Lexer::scan() {
 			if (lex.size() > 9) {
 				deleteUntilDelimiter();
 				std::cout << "ERRO::LINHA:" << line
-						<< ": O numero execede o limite de digitos(9),  >>"
+						<< ": O numero excede o limite de digitos(9),  >>"
 						<< lex << "<<.\n";
 				return Token(ERROR,line, "NUMBER_TOO_BIG");
 			}

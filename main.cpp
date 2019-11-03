@@ -39,12 +39,11 @@ int main(){
 	node * tree = parser.parse(v);
 
 	cout << "++++++++++++++" << endl;
-	cout << "LINES READ: " << lexer.line << endl;
-	cout << "sucesso" << endl;
 	printTree(tree);
 	printf("##################\n");
-	printLeaves(tree);
-	printf("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n");
 	analyse(tree);
+	printf("##################\n");
+	cout << "LINES READ: " << lexer.line << endl;
+	cout << "sucesso" << endl;
 
 }

@@ -159,19 +159,16 @@ node * Parser::parse(std::vector<Token> &v){
 
 	loadBuffer(v);
 	int x = s.top()->token.getTag();
-	printf("x=%d\n",debug[x]);
 	int index = 0;
 	Token t;
 	while(x!=$){
 		t = tokenBuffer[index];
-		std::cout << "TOKEN: " << t.getLexeme() << std::endl;
-		std::cout<<"token= " << tag[t.getTag()]<<std::endl;
-		std::cout << "Pilha >>" << debug[x] << std::endl;
+		std::cout << "Token >> " << tag[t.getTag()]<<std::endl;
+		std::cout << "Pilha >> " << debug[x] << std::endl;
 		if(x==t.getTag()){ // SE FOR TERMINAL E BATE COM O TOKEN
 			s.pop();
 			index++;
 			cur->token = t;
-			printf("x==w\n");
 		}
 		else if(isTerminal(x)){ //SE FOR UM TERMINAL E NAO BATE COM O TOKEN ATUAL
 			s.pop();
@@ -218,12 +215,8 @@ node * Parser::parse(std::vector<Token> &v){
 		x = s.top()->token.getTag();
 
 	}
-	std::cout << std::endl << "tokenBuffer: ";
 
-	for(int i=0;i<tokenBuffer.size();i++){
-		std::cout << debug[tokenBuffer[i].getTag()] << " ";
-	}
-	std::cout << std::endl;
+
 	return head;
 }
 
