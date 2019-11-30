@@ -46,21 +46,21 @@ node * analyse(node * n) {
 			case REGRA3: {
 				int x = i-5;
 				if(x>=0 && v[x]->token.getTag() == DIREITA){
-					printf("ERRO::LINHA:%d: VIRE PARA ESQUERDA seguido por VIRE A DIREITA eh redundante.\n",v[i - 1]->token.getLine());
+					printf("ERRO::LINHA:%d: [VIRE PARA ESQUERDA] seguido por [VIRE PARA DIREITA].\n",v[i - 1]->token.getLine());
 				}
 				break;
 			}
 			case REGRA4: {
 				int x = i - 5;
 				if (x >= 0 && v[x]->token.getTag() == ESQUERDA) {
-					printf("ERRO::LINHA:%d: VIRE PARA DIREITA seguido por VIRE A ESQUERDA eh redundante.\n",v[i - 1]->token.getLine());
+					printf("ERRO::LINHA:%d: [VIRE PARA DIREITA] seguido por [VIRE PARA ESQUERDA].\n",v[i - 1]->token.getLine());
 				}
 				break;
 			}
 			case REGRA5: {
 				int x = i +1;
 				if (!(x < v.size()) || !(v[x]->token.getTag() == AGUARDE)) {
-					printf("ERRO::LINHA:%d: MOVA N deve ser seguido por AGUARDE ATE ...\n",v[i - 1]->token.getLine());
+					printf("ERRO::LINHA:%d: [MOVA N] deve ser seguido por [AGUARDE ATE ...]\n",v[i - 1]->token.getLine());
 				}
 				break;
 			}
