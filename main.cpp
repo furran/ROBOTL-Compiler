@@ -13,37 +13,18 @@ int main(){
 
 	cout << "Digite o nome do arquivo: " << endl;
 	cin >> filename;
-	Lexer lexer(filename);
-	vector<Token> v;
-	int length = 4096;
-	v.resize(length);
-
-	int i =  0;
-	int j = 1;
-	while(true){
-
-		v[i] =lexer.scan();
-		if(v[i].getTag()== END_OF_FILE) break;
-		i++;
-		if(i >= 4096) {
-			j++;
-			v.resize(length*j);
-		}
-
-	}
-
-	Parser parser;
+	Parser parser(filename);
 
 	cout << "++++++++++++++" << endl;
 
-	node * tree = parser.parse(v);
+	node * tree = parser.parse();
 
 	cout << "++++++++++++++" << endl;
 	printTree(tree);
 	printf("##################\n");
 	analyse(tree);
 	printf("##################\n");
-	cout << "LINES READ: " << lexer.line << endl;
+	cout << "LINES READ: " << parser.lexer.line << endl;
 	cout << "sucesso" << endl;
 
 }

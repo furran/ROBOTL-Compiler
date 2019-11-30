@@ -25,6 +25,10 @@ void Lexer::deleteUntilDelimiter() {
 	}
 }
 
+Token Lexer::getCurrentToken(){
+	return curToken;
+}
+
 Token Lexer::scan() {
 
 	peek = buffer.next();
@@ -41,8 +45,8 @@ Token Lexer::scan() {
 					line++;
 					break;
 				} else if (peek == END_FILE) {
-					Token t(END_OF_FILE, line, "");
-					return t;
+					curToken = Token(END_OF_FILE, line, "");
+					return curToken;
 				}
 			}
 		} else
@@ -86,12 +90,13 @@ Token Lexer::scan() {
 				lex);
 
 		if (it != reservedWords.end()) {
-			Token w(it->second.getTag(),line,it->second.getLexeme());
-			return w;
+			curToken = Token(it->second.getTag(),line,it->second.getLexeme());
+
+			return curToken;
 		}
 
-		Token w(ID,line ,lex);
-		return w;
+		curToken = Token(ID,line ,lex);
+		return curToken;
 	}
 	// tokeniza numero
 	if (isdigit(peek)) {
@@ -105,7 +110,8 @@ Token Lexer::scan() {
 				std::cout << "ERRO::LINHA:" << line
 						<< ": O numero excede o limite de digitos(9),  >>"
 						<< lex << "<<.\n";
-				return Token(ERROR,line, "NUMBER_TOO_BIG");
+				curToken = Token(ERROR,line, "NUMBER_TOO_BIG");
+				return curToken;
 			}
 		}
 
@@ -119,12 +125,12 @@ Token Lexer::scan() {
 			}
 			std::cout << "ERRO::LINHA:" << line << ": Numero mal formado. >> "
 					<< lex << " <<\n";
-
-			return Token(ERROR,line, "NUMBER_MALFORMED");
+			curToken = Token(ERROR,line, "NUMBER_MALFORMED");
+			return curToken;
 		}
 
-		Token num(NUMERO,line, lex);
-		return num;
+		curToken = Token(NUMERO,line, lex);
+		return curToken;
 	}
 	if (peek == END_FILE) {
 		Token t(END_OF_FILE,line, "");
@@ -140,7 +146,7 @@ Token Lexer::scan() {
 				<< lex << "\n";
 	}
 
-	Token t(ERROR,line, "");
-	return t;
+	curToken = Token(ERROR,line, "");
+	return curToken;
 }
 

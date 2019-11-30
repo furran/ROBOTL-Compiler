@@ -3,21 +3,17 @@
 
 #include <string>
 #include <vector>
+#include "lexer.h"
 
 struct node;
 
 class Parser{
-private:
-	std::vector<Token> tokenBuffer;
 public:
-
-	Parser();
+	Lexer lexer;
+	Parser(std::string filename);
 	virtual ~Parser();
-
-	void loadBuffer(std::vector<Token>& v);
-	void error();
 	Token getNextToken();
-	node * parse(std::vector<Token> &v);
+	node * parse();
 };
 
 #endif

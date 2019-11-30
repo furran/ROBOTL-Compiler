@@ -23,8 +23,10 @@ struct hash_pair {
 std::unordered_map<pair,std::vector<int>,hash_pair> map;
 
 
-Parser::Parser()
+Parser::Parser(std::string filename)
+:lexer(filename)
 	{
+
 	//++++ CRIA TABELA SINTATICA +++++
 
 	//PROGRAMA
@@ -129,16 +131,7 @@ Parser::~Parser() {
 
 }
 
-void Parser::loadBuffer(std::vector<Token> &v){
-	tokenBuffer.swap(v);
-}
-
-
-void Parser::error(){
-	printf("ERRO\n");
-}
-
-node * Parser::parse(std::vector<Token> &v){
+node * Parser::parse(){
 	std::stack<node*> s;
 	std::unordered_map<pair,std::vector<int>,hash_pair>::iterator it;
 	std::vector<int> frase;
@@ -157,22 +150,22 @@ node * Parser::parse(std::vector<Token> &v){
 	s.push(Z);
 	s.push(head);
 
-	loadBuffer(v);
 	int x = s.top()->token.getTag();
 	int index = 0;
 	Token t;
+	t = lexer.scan();
 	while(x!=$){
-		t = tokenBuffer[index];
+		t = lexer.getCurrentToken();
 		std::cout << "Token >> " << tag[t.getTag()]<<std::endl;
 		std::cout << "Pilha >> " << debug[x] << std::endl;
 		if(x==t.getTag()){ // SE FOR TERMINAL E BATE COM O TOKEN
 			s.pop();
-			index++;
+			lexer.scan();
 			cur->token = t;
 		}
 		else if(isTerminal(x)){ //SE FOR UM TERMINAL E NAO BATE COM O TOKEN ATUAL
 			s.pop();
-			index++;
+			lexer.scan();
 
 			tmp = new node;
 			tmp->token = t;
@@ -198,7 +191,7 @@ node * Parser::parse(std::vector<Token> &v){
 
 			} else{//SE TIVER PRODUCAO VAZIA
 				it = map.find(std::make_pair(x,VAZIO));
-				if(map.find(std::make_pair(x,VAZIO))!=map.end()){
+				if(it!=map.end()){
 					tmp = new node;
 					tmp->token.tag = VAZIO;
 					cur->children.push_back(tmp);
