@@ -12,6 +12,7 @@ Buffer::Buffer(std::string filename) :
 		if (file.eof()) {
 			int p = file.gcount();
 			buff1[p] = -1;
+			file.close();
 		}
 		transform(buff1.begin(), buff1.end(), buff1.begin(), ::tolower);
 	} else {
@@ -30,7 +31,7 @@ std::string* Buffer::getOtherBuffer(){
 	else if(curBuff == &buff2){
 		return &buff1;
 	}
-	printf("error:: Buffer::getOtherBuffer() falhou. (in file  >> token.cpp <<)\n");
+	printf("error:: Buffer::getOtherBuffer() falhou. (in file  >> buffer.cpp <<)\n");
 	return NULL;
 
 }
@@ -43,6 +44,7 @@ void Buffer::load(){
 		if(file.eof()){
 			int howManyLeft = file.gcount();
 			(*curBuff)[howManyLeft] = -1;
+			file.close();
 		}
 	}
 }

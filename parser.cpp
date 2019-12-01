@@ -134,15 +134,12 @@ Parser::~Parser() {
 node * Parser::parse(){
 	std::stack<node*> s;
 	std::unordered_map<pair,std::vector<int>,hash_pair>::iterator it;
-	std::vector<int> frase;
 
 	node *Z = new node;
 	node *head = new node;//<<
 	node *cur = head;
 	node *pai = cur;
 	node *tmp;
-
-	int regra;
 
 	head->token.tag=pPROGRAMA;//<<
 	Z->token.tag = $;
@@ -151,9 +148,10 @@ node * Parser::parse(){
 	s.push(head);
 
 	int x = s.top()->token.getTag();
-	int index = 0;
+
 	Token t;
 	t = lexer.scan();
+
 	while(x!=$){
 		t = lexer.getCurrentToken();
 		std::cout << "Token >> " << tag[t.getTag()]<<std::endl;
@@ -173,40 +171,35 @@ node * Parser::parse(){
 
 			printf("ERRO::LINHA:%d: Terminal nao bate.\n", t.getLine());
 		}
-		else if(isNonTerminal(x)){ //SE FOR UMA VARIAVEL
+		else if (isNonTerminal(x)) { //SE FOR UMA VARIAVEL
 			pai = s.top();
 			s.pop();
-			it = map.find(std::make_pair(x,t.getTag()));
-			if(it!=map.end()){
+			it = map.find(std::make_pair(x, t.getTag()));
+			if (it != map.end()) {
 				node *arr[it->second.size()];
-				for(int i=it->second.size()-1;i>=0;i--){
-
+				for (int i = it->second.size() - 1; i >= 0; i--) {
 					arr[i] = new node;
 					(arr[i])->token.tag = it->second[i];
-
 					s.push(arr[i]);
 				}
 
-				cur->children.insert(cur->children.begin(), arr, arr+it->second.size());
-
-			} else{//SE TIVER PRODUCAO VAZIA
-				it = map.find(std::make_pair(x,VAZIO));
-				if(it!=map.end()){
+				cur->children.insert(cur->children.begin(), arr,
+						arr + it->second.size());
+			} else { //SE TIVER PRODUCAO VAZIA
+				it = map.find(std::make_pair(x, VAZIO));
+				if (it != map.end()) {
 					tmp = new node;
 					tmp->token.tag = VAZIO;
 					cur->children.push_back(tmp);
-				}
-				else printf("ERRO::LINHA:%d: Producao incapaz de gerar o token.\n", t.getLine());
+				} else
+					printf("ERRO::LINHA:%d: Producao incapaz de gerar o token.\n",t.getLine());
 			}
 		}
 		else if(isRegra(x)){
 			s.pop();
 		}
-
-
 		cur = s.top();
 		x = s.top()->token.getTag();
-
 	}
 
 
