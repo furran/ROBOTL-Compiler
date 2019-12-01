@@ -15,6 +15,10 @@ Lexer::Lexer(std::string filename) :
 	}
 }
 
+int Lexer::getLinesRead(){
+	return line;
+}
+
 void Lexer::install(Token w) {
 	reservedWords.insert(std::make_pair((std::string) w.lexeme, w)); // @suppress("Invalid arguments")
 }
@@ -25,11 +29,11 @@ void Lexer::deleteUntilDelimiter() {
 	}
 }
 
-Token Lexer::getCurrentToken(){
+Token* Lexer::getCurrentToken(){
 	return curToken;
 }
 
-Token Lexer::scan() {
+Token * Lexer::scan() {
 
 	peek = buffer.next();
 	//consome caracteres em branco, linhas de comentario
@@ -45,7 +49,7 @@ Token Lexer::scan() {
 					line++;
 					break;
 				} else if (peek == END_FILE) {
-					curToken = Token(END_OF_FILE, line, "");
+					curToken = new Token(END_OF_FILE, line, "");
 					return curToken;
 				}
 			}
@@ -53,7 +57,6 @@ Token Lexer::scan() {
 			break;
 		peek = buffer.next();
 	}
-
 	//tokeniza id ou keyword
 	if (isalpha(peek) || peek == '_') {
 		std::string lex("");
@@ -64,7 +67,7 @@ Token Lexer::scan() {
 			look = buffer.lookAhead();
 			lex += peek;
 
-			if (lex.size() > 150) {
+			if (lex.size() >= 150) {
 				std::cout << "AVISO::LINHA:" << line
 						<< ": Limite de caracteres(150) excedido para o identificador. Desconsiderando caracteres seguintes....>>"
 						<< lex << "<<" << std::endl;
@@ -90,12 +93,12 @@ Token Lexer::scan() {
 				lex);
 
 		if (it != reservedWords.end()) {
-			curToken = Token(it->second.getTag(),line,it->second.getLexeme());
+			curToken = new Token(it->second.getTag(),line,it->second.getLexeme());
 
 			return curToken;
 		}
 
-		curToken = Token(ID,line ,lex);
+		curToken = new Token(ID,line ,lex);
 		return curToken;
 	}
 	// tokeniza numero
@@ -110,7 +113,7 @@ Token Lexer::scan() {
 				std::cout << "ERRO::LINHA:" << line
 						<< ": O numero excede o limite de digitos(9),  >>"
 						<< lex << "<<.\n";
-				curToken = Token(ERROR,line, "NUMBER_TOO_BIG");
+				curToken = new Token(ERROR,line, "NUMBER_TOO_BIG");
 				return curToken;
 			}
 		}
@@ -125,16 +128,16 @@ Token Lexer::scan() {
 			}
 			std::cout << "ERRO::LINHA:" << line << ": Numero mal formado. >> "
 					<< lex << " <<\n";
-			curToken = Token(ERROR,line, "NUMBER_MALFORMED");
+			curToken = new Token(ERROR,line, "NUMBER_MALFORMED");
 			return curToken;
 		}
 
-		curToken = Token(NUMERO,line, lex);
+		curToken = new Token(NUMERO,line, lex);
 		return curToken;
 	}
 	if (peek == END_FILE) {
-		Token t(END_OF_FILE,line, "");
-		return t;
+		curToken = new Token(END_OF_FILE,line, "");
+		return curToken;
 	} else {
 		std::string lex("");
 		while (!isDelimiter(buffer.lookAhead())) {
@@ -146,7 +149,7 @@ Token Lexer::scan() {
 				<< lex << "\n";
 	}
 
-	curToken = Token(ERROR,line, "");
+	curToken = new Token(ERROR,line, "");
 	return curToken;
 }
 

@@ -5,7 +5,7 @@ Buffer::Buffer(std::string filename) :
 {
 	buff1.resize(length);
 	buff2.resize(length);
-	file.open(filename, std::ios::in | std::ios::binary);
+	file.open(filename, std::ios::in);
 	int length = this->length;
 	if (file) {
 		file.read(&buff1[0], length);

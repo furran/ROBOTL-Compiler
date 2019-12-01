@@ -1,13 +1,13 @@
 programainicio
 DEFINAINSTRUCAO Trilha COMO #cOmentario #1 @@_#
  INICIO
-   Mova 3
    Aguarde Ate Robo Pronto
+   Mova 3
    Vire Para ESQUERDA
    Apague Lampada
    Vire Para DIREITA
-   Mova 1 passos
    Aguarde Ate Robo Pronto
+   Mova 1 passos
  FIM
  EXECUCAOINICIO
    Repita 3 VEZES Trilha FIMREPITA

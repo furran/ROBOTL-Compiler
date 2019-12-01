@@ -4,7 +4,7 @@
 #include "table.cpp"
 #include "buffer.cpp"
 #include "parser.cpp"
-#include "semantic.cpp"
+
 
 using namespace std;
 
@@ -22,9 +22,8 @@ int main(){
 	cout << "++++++++++++++" << endl;
 	printTree(tree);
 	printf("##################\n");
-	analyse(tree);
 	printf("##################\n");
-	cout << "LINES READ: " << parser.lexer.line << endl;
+	cout << "LINES READ: " << parser.lexer.getLinesRead() << endl;
 	cout << "sucesso" << endl;
 
 }

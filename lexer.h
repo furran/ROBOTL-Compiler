@@ -9,16 +9,17 @@
 class Lexer{
 private:
 	char peek;
-	Token curToken;
-public:
-	int line;
+	Token* curToken;
 	Buffer buffer;
-
+	int line;
+	std::unordered_map<std::string, Token> reservedWords;
+public:
 	Lexer(std::string filename);
-	Token getCurrentToken();
+	int getLinesRead();
 	void install(Token w);
 	void deleteUntilDelimiter();
-	Token scan();
+	Token* getCurrentToken();
+	Token* scan();
 };
 
 #endif

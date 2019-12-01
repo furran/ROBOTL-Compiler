@@ -77,7 +77,7 @@ Parser::Parser(std::string filename)
 	map[std::make_pair(pCONDICIONALOPT,SENAO)] = {SENAO,pCOMANDO,FIMSENAO};
 	map[std::make_pair(pCONDICIONALOPT,VAZIO)] = {};
 	//INSTRUCAO
-	map[std::make_pair(pINSTRUCAO,MOVA)] = {MOVA,pNUMEROOPT,pINSTRUCAOOPT, REGRA5}; // << REGRA 5
+	map[std::make_pair(pINSTRUCAO,MOVA)] = {REGRA5,MOVA,pNUMEROOPT,pINSTRUCAOOPT}; // << REGRA 5
 	map[std::make_pair(pINSTRUCAO,VIRE)] = {VIRE,PARA,pSENTIDO};
 	map[std::make_pair(pINSTRUCAO,ID)] = {ID, REGRA2}; // << REGRA 2
 	map[std::make_pair(pINSTRUCAO,PARE)] = {PARE};
@@ -134,32 +134,36 @@ Parser::~Parser() {
 node * Parser::parse(){
 	std::stack<node*> s;
 	std::unordered_map<pair,std::vector<int>,hash_pair>::iterator it;
-
+	std::vector<Token*> leaves;
+	int index = 0;
 	node *Z = new node;
 	node *head = new node;//<<
 	node *cur = head;
 	node *pai = cur;
 	node *tmp;
 
-	head->token.tag=pPROGRAMA;//<<
-	Z->token.tag = $;
+	head->token = new Token(pPROGRAMA,0,"");//<<
+	Z->token = new Token($,0,"");
 
 	s.push(Z);
 	s.push(head);
-
-	int x = s.top()->token.getTag();
-
-	Token t;
+	node* no= s.top();
+	int x = s.top()->token->tag;
+	Token *t;
 	t = lexer.scan();
 
 	while(x!=$){
+
 		t = lexer.getCurrentToken();
-		std::cout << "Token >> " << tag[t.getTag()]<<std::endl;
+		std::cout << "Token >> " << tag[(*t).getTag()]<<std::endl;
 		std::cout << "Pilha >> " << debug[x] << std::endl;
-		if(x==t.getTag()){ // SE FOR TERMINAL E BATE COM O TOKEN
+		if(x==(*t).getTag()){ // SE FOR TERMINAL E BATE COM O TOKEN
 			s.pop();
 			lexer.scan();
 			cur->token = t;
+			leaves.push_back(t);
+			index++;
+
 		}
 		else if(isTerminal(x)){ //SE FOR UM TERMINAL E NAO BATE COM O TOKEN ATUAL
 			s.pop();
@@ -169,38 +173,87 @@ node * Parser::parse(){
 			tmp->token = t;
 			cur->children.push_back(tmp);
 
-			printf("ERRO::LINHA:%d: Terminal nao bate.\n", t.getLine());
+			printf("ERRO::LINHA:%d: Terminal nao bate.\n", (*t).getLine());
 		}
 		else if (isNonTerminal(x)) { //SE FOR UMA VARIAVEL
 			pai = s.top();
 			s.pop();
-			it = map.find(std::make_pair(x, t.getTag()));
+			it = map.find(std::make_pair(x, (*t).getTag()));
 			if (it != map.end()) {
 				node *arr[it->second.size()];
 				for (int i = it->second.size() - 1; i >= 0; i--) {
 					arr[i] = new node;
-					(arr[i])->token.tag = it->second[i];
+					(arr[i])->token = new Token(it->second[i],0,"");
 					s.push(arr[i]);
 				}
-
-				cur->children.insert(cur->children.begin(), arr,
-						arr + it->second.size());
+				cur->children.insert(cur->children.begin(), arr,arr + it->second.size());
 			} else { //SE TIVER PRODUCAO VAZIA
 				it = map.find(std::make_pair(x, VAZIO));
 				if (it != map.end()) {
 					tmp = new node;
-					tmp->token.tag = VAZIO;
+					tmp->token = new Token(VAZIO,0,"");
 					cur->children.push_back(tmp);
 				} else
-					printf("ERRO::LINHA:%d: Producao incapaz de gerar o token.\n",t.getLine());
+					printf("ERRO::LINHA:%d: Producao incapaz de gerar o token.\n",(*t).getLine());
 			}
 		}
 		else if(isRegra(x)){
+			if(index-5>=0)
+			std::cout << "debug VERDADE: " << debug[leaves[index-5]->tag] << std::endl;
+			switch (x) {
+			case REGRA1: {
+				int var = index - 1;
+				if (var >= 0 && symbolTable.count(leaves[var]->getLexeme()) == false) {
+					symbolTable[leaves[var]->getLexeme()] = *leaves[var];
+				} else
+					printf(
+							"ERRO::LINHA:%d: Mais de uma instrucao com o mesmo identicador foram declaradas.\n",
+							leaves[var]->getLine());
+				break;
+			}
+			case REGRA2: {
+				int var = index - 1;
+				if (var >= 0 && symbolTable.count(leaves[var]->getLexeme())== false) {
+					printf(
+							"ERRO::LINHA:%d: Referencia a instrucao nao declarada.\n",
+							leaves[var]->getLine());
+				}
+				break;
+			}
+			case REGRA3: {
+				int var = index - 4;
+				if (var >= 0 && leaves[var]->getTag() == DIREITA) {
+					printf(
+							"ERRO::LINHA:%d: [VIRE PARA ESQUERDA] seguido por [VIRE PARA DIREITA].\n",
+							leaves[var]->getLine());
+				}
+				break;
+			}
+			case REGRA4: {
+				int var = index - 4;
+				if (var >= 0 && leaves[var]->getTag() == ESQUERDA) {
+					printf(
+							"ERRO::LINHA:%d: [VIRE PARA DIREITA] seguido por [VIRE PARA ESQUERDA].\n",
+							leaves[var]->getLine());
+				}
+				break;
+			}
+			case REGRA5: {
+				int var = index - 1;
+				if (var >= 0 && !(leaves[var]->getTag() == PRONTO)) {
+					printf(
+							"ERRO::LINHA:%d: [MOVA N] deve ser precedido por [AGUARDE ATE PRONTO]\n",
+							leaves[var]->getLine());
+				}
+				break;
+			}
+			}
 			s.pop();
 		}
 		cur = s.top();
-		x = s.top()->token.getTag();
+		x = s.top()->token->getTag();
 	}
+
 
 
 	return head;
