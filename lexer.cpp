@@ -36,8 +36,8 @@ Token* Lexer::getCurrentToken(){
 Token * Lexer::scan() {
 
 	peek = buffer.next();
-	//consome caracteres em branco, linhas de comentario
-	//,LF,CR at� o pr�ximo caractere v�lido.
+	//consome caracteres em branco, linhas de comentário
+	//,LF,CR até o próximo caractere válido.
 	while (true) {
 		if (peek == ' ' || peek == '\t' || peek == '\r');
 		else if (peek == '\n')
@@ -53,8 +53,7 @@ Token * Lexer::scan() {
 					return curToken;
 				}
 			}
-		} else
-			break;
+		} else break;
 		peek = buffer.next();
 	}
 	//tokeniza id ou keyword
@@ -85,16 +84,11 @@ Token * Lexer::scan() {
 			std::cout << "AVISO::LINHA:" << line
 					<< ": Simbolos estranhos sendo ignorados. >> " << tmp
 					<< " <<" << std::endl;
-
 		}
-
-
-		std::unordered_map<std::string, Token>::iterator it = reservedWords.find(
-				lex);
+		std::unordered_map<std::string, Token>::iterator it = reservedWords.find(lex);
 
 		if (it != reservedWords.end()) {
 			curToken = new Token(it->second.getTag(),line,it->second.getLexeme());
-
 			return curToken;
 		}
 

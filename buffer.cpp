@@ -1,7 +1,7 @@
 #include "buffer.h"
 
 Buffer::Buffer(std::string filename) :
-		length(4096), buff1(), buff2(), beginLex(0), forward(0)
+		length(20), buff1(), buff2(), beginLex(0), forward(0)
 {
 	buff1.resize(length);
 	buff2.resize(length);
@@ -51,14 +51,14 @@ void Buffer::load(){
 
 char Buffer::next(){
 	int x = forward;
-	std::string * buff = curBuff;
 	forward++;
 	if(forward==length){
 		forward = 0;
 		curBuff = this->getOtherBuffer();
 		this->load();
+		return (*this->getOtherBuffer())[x];
 	}
-	return (*buff)[x];
+	return (*curBuff)[x];
 }
 
 void Buffer::retract(){

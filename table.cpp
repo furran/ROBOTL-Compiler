@@ -73,6 +73,8 @@ std::string debug[] { "PROGRAMAINICIO", "FIMPROGRAMA", "EXECUCAOINICIO",
 std::unordered_map<std::string, Token> symbolTable;
 
 
+
+
 bool isDelimiter(char peek){ //ve se o caractere eh o que consideramos como "espaco em branco"
 	if(peek == ' ' || peek == '\n' || peek == '\t' || peek == '\r' || peek == '#' || peek == END_FILE){
 		return true;
