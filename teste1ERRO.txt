@@ -1,18 +1,16 @@
 programainicio
-DEFINAINSTRUCAO Trilha COMO
+DEFINAINSTRUCAO Trilha COM
  INICIO
-   Mova 3_ABC Passos
    Aguarde Ate Robo Pronto
+   Mova 3a
    Vire Para ESQUERDA
-   Apagar Lampada
+   Apague Lampada
    Vire Para DIREITA
-   Mova 10000000000000000 Passo
    Aguarde Ate Robo Pronto
-@@@@@@@@@@@@@
- FIM@
- EXEC@UCAOINICIO
-   Rep@ita 3 VEZES Trilha
+   Mova 1 passos
+ FIM
+ EXECUCAOINICIO
+   Repita 3 VEZES Trilha FIMREPITA
    Vire Para DIREITA
  FIMEXECUCAO
 FIMPROGRAMA
-@@

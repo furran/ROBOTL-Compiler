@@ -148,14 +148,11 @@ node * Parser::parse(){
 
 		}
 		else if(isTerminal(x)){ // caso 2
-			s.pop();
+
 			lexer.scan();
 
-			tmp = new node;
-			tmp->token = t;
-			cur->children.push_back(tmp);
-
-			printf("ERRO::LINHA:%d: Terminal nao bate.\n", (*t).getLine());
+			std::cout << "ERRO::LINHA:"<<(*t).getLine() <<": Erro sintatico. Esperava-se ["<< debug[s.top()->token->tag] << "].\n";
+			s.pop();
 		}
 		else if (isNonTerminal(x)) {//caso 3
 			pai = s.top();
@@ -180,24 +177,26 @@ node * Parser::parse(){
 			}
 		}
 		else if(isRegra(x)){
-			if(index-5>=0)
 			switch (x) {
 			case REGRA1: {
 				int var = index - 1;
 				if (var >= 0 && symbolTable.count(leaves[var]->getLexeme()) == false) {
 					symbolTable[leaves[var]->getLexeme()] = *leaves[var];
-				} else
+				} else{
 					printf(
-							"ERRO::LINHA:%d: Mais de uma instrucao com o mesmo identicador foram declaradas.\n",
+							"ERRO::LINHA:%d: Mais de uma instrucao com o mesmo identicador foram declaradas. ",
 							leaves[var]->getLine());
+					std::cout<<">> [" << leaves[var]->lexeme <<"] <<" <<std::endl;
+				}
 				break;
 			}
 			case REGRA2: {
 				int var = index - 1;
 				if (var >= 0 && symbolTable.count(leaves[var]->getLexeme())== false) {
 					printf(
-							"ERRO::LINHA:%d: Referencia a instrucao nao declarada.\n",
+							"ERRO::LINHA:%d: Referencia a instrucao nao declarada. ",
 							leaves[var]->getLine());
+					std::cout<<">> [" << leaves[var]->lexeme <<"] <<" <<std::endl;
 				}
 				break;
 			}
@@ -223,7 +222,7 @@ node * Parser::parse(){
 				int var = index - 1;
 				if (var >= 0 && !(leaves[var]->getTag() == PRONTO)) {
 					printf(
-							"ERRO::LINHA:%d: [MOVA N] deve ser precedido por [AGUARDE ATE PRONTO]\n",
+							"ERRO::LINHA:%d: [MOVA N] deve ser precedido por [AGUARDE ATE PRONTO].\n",
 							leaves[var]->getLine());
 				}
 				break;
